@@ -103,7 +103,7 @@ class Shoe {
 List<Map<String, dynamic>> products = [
   {
     "id": 1,
-    "title": "sadasd",
+    "title": "sh1",
     "category": "asdasd",
     "sizes": [1, 2, 5, 6],
     "colors": ["red", "green", "blue"],
@@ -113,8 +113,8 @@ List<Map<String, dynamic>> products = [
     "brandLogo": "asdasdas"
   },
   {
-    "id": 1,
-    "title": "sadasd",
+    "id": 2,
+    "title": "sh2",
     "category": "asdasd",
     "sizes": [1, 2, 5, 6],
     "colors": ["red", "green", "blue"],
@@ -124,8 +124,8 @@ List<Map<String, dynamic>> products = [
     "brandLogo": "asdasdas"
   },
   {
-    "id": 1,
-    "title": "sadasd",
+    "id": 3,
+    "title": "sh3",
     "category": "asdasd",
     "sizes": [1, 2, 5, 6],
     "colors": ["red", "green", "blue"],

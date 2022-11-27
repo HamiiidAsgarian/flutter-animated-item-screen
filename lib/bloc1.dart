@@ -1,66 +1,74 @@
-import 'package:animateditems/main.dart';
 import 'package:animateditems/shoe_class.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'main.dart';
+
 abstract class CardEvent {}
 
-class AddToCardPressed extends CardEvent {
-  final Shoe shoe;
+class ChangeCurrentPage extends CardEvent {
+  final int currentPage;
 
-  AddToCardPressed({required this.shoe});
+  ChangeCurrentPage({required this.currentPage});
 }
 
-class RemoveFromCardPressed extends CardEvent {}
+class ChangeDragDirection extends CardEvent {
+  final CdragDirection lastDragDirection;
+
+  ChangeDragDirection({required this.lastDragDirection});
+}
 
 //----------------------------------------------
-abstract class CardState {}
+abstract class CardState {
+  final List<Shoe>? shoesMap;
+  final CdragDirection? lastDragDirection;
+  final int? currentPage;
 
-class InitState extends CardState {}
+  CardState({this.shoesMap, this.lastDragDirection, this.currentPage});
+}
 
-class ItemsInitState extends CardState {
-  final List<Map> shoesMap;
-  ItemsInitState(this.shoesMap);
+// class InitState extends CardState {}
 
-  List shoesClassed = products.map((e) => Shoe.fromMap(e)).toList();
+class HomeInitState extends CardState {
+  HomeInitState()
+      : super(
+            currentPage: 0,
+            lastDragDirection: CdragDirection.na,
+            shoesMap: products.map((e) => Shoe.fromMap(e)).toList());
 }
 
 // class InitCardState extends CardState {}
 
-class UpdateCardState extends CardState {
-  final List<Shoe> shoes;
-  UpdateCardState(this.shoes);
+class UpdateDragDirectionState extends CardState {
+  final CdragDirection lastDragDirection;
+  UpdateDragDirectionState({required this.lastDragDirection});
 }
 
-// class UpdateState extends CardState {
-//   final int counter;
-//   UpdateState(this.counter);
-// }
+class UpdateCurrentPageState extends CardState {
+  final int currentPage;
+  UpdateCurrentPageState({required this.currentPage});
+}
 
 //------------------------------
 
 class CardBloc extends Bloc<CardEvent, CardState> {
-  int counter = 0;
-  List<Shoe> shoesList = [];
-  CardBloc() : super(InitState()) {
-    // on<AddToCardPressed>((event, emit) => state + 1);
-    // on<AddToCardPressed>((event, emit) => state - 1);
-    on<AddToCardPressed>(onAddShoe);
-    // on<RemoveFromCardPressed>(onNumDecrease);
+  int currentPage = 0;
+  // List<Shoe> shoesList = [];
+  // List<Shoe> shoesListFromMap = products.map((e) => Shoe.fromMap(e)).toList();
+
+  CardBloc() : super(HomeInitState()) {
+    on<ChangeCurrentPage>(onChangeCurrentPage);
+    on<ChangeDragDirection>(onChangeDragDirection);
   }
 
-  void onAddShoe(AddToCardPressed event, Emitter<CardState> emit) async {
-    shoesList.add(event.shoe);
-    emit(UpdateCardState(shoesList));
+  void onChangeCurrentPage(
+      ChangeCurrentPage event, Emitter<CardState> emit) async {
+    currentPage++;
+    emit(UpdateCurrentPageState(currentPage: event.currentPage));
   }
 
-  // void onNumIncrease(AddToCardPressed event, Emitter<CardState> emit) async {
-  //   counter++;
-  //   emit(UpdateState(counter));
-  // }
-
-  // void onNumDecrease(
-  //     RemoveFromCardPressed event, Emitter<CardState> emit) async {
-  //   counter--;
-  //   emit(UpdateState(counter));
-  // }
+  void onChangeDragDirection(
+      ChangeDragDirection event, Emitter<CardState> emit) async {
+    currentPage++;
+    emit(UpdateDragDirectionState(lastDragDirection: state.lastDragDirection!));
+  }
 }

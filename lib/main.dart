@@ -22,28 +22,36 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+//   @override
+//   State<HomeScreen> createState() => _HomeScreenState();
+// }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late int currentPage;
-  late CdragDirection lastDragDirection;
-  late List<Shoe> shoes;
+// class _HomeScreenState extends State<HomeScreen> {
+  // final CdragDirection lastDragDirection;
+  // final int currentPage;
+  // final List<Shoe> shoes;
 
-  @override
-  void initState() {
-    currentPage = 1;
-    lastDragDirection = CdragDirection.na;
-    shoes = products.map((e) => Shoe.fromMap(e)).toList();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   currentPage = 0;
+  //   lastDragDirection = CdragDirection.na;
+
+  //   // shoes = products.map((e) => Shoe.fromMap(e)).toList();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    CardState blocState = BlocProvider.of<CardBloc>(context).state;
+    var shoes = blocState.shoesMap ?? [];
+    var currentPage = blocState.currentPage ?? 0;
+    var lastDragDirection = blocState.lastDragDirection ?? CdragDirection.na;
+
+    // print(shoes.length);
+
     developer.log("0-MainScreenBuilt");
     Widget item = Center(
         // alignment: Alignment.topCenter,
@@ -52,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
       key: Key(currentPage.toString()),
       onAnimationEnd: (CdragDirection direction) {
         if (direction == CdragDirection.right) {
-          switch (currentPage < shoes.length) {
+          switch (currentPage < shoes.length - 1) {
             case true:
               currentPage++;
               break;
@@ -69,16 +77,18 @@ class _HomeScreenState extends State<HomeScreen> {
               break;
 
             case false:
-              currentPage = shoes.length;
+              currentPage = shoes.length - 1;
               break;
           }
         }
         setState(() {
           lastDragDirection = direction;
         });
+        print(currentPage);
       },
-      child: Text(currentPage.toString()),
+      child: Text(shoes[currentPage].title ?? "NA"),
     ));
+
     return Scaffold(
       body: Container(
         color: Colors.blueGrey[800],
@@ -99,30 +109,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         MyRoundedButton(
                             onPress: () {
-                              BlocProvider.of<CardBloc>(context).add(
-                                  AddToCardPressed(
-                                      shoe: Shoe(id: Random().nextInt(100))));
-                              print(
-                                  BlocProvider.of<CardBloc>(context).shoesList);
+                              // BlocProvider.of<CardBloc>(context).add(
+                              //     AddToCardPressed(
+                              //         shoe: Shoe(id: Random().nextInt(100))));
+                              // print(
+                              //     BlocProvider.of<CardBloc>(context).shoesList);
                             },
                             child: const Icon(Icons.shopping_bag_outlined)),
-                        CircleAvatar(
+                        const CircleAvatar(
                           backgroundColor: Colors.black,
                           radius: 10,
                           child: Padding(
-                            padding: const EdgeInsets.all(3),
-                            child: FittedBox(
-                                child: BlocBuilder<CardBloc, CardState>(
-                              builder: (context, state) {
-                                if (state is InitState) {
-                                  return Text("00".toString());
-                                }
-                                if (state is UpdateCardState) {
-                                  return Text(state.shoes.length.toString());
-                                }
-                                return const SizedBox();
-                              },
-                            )),
+                            padding: EdgeInsets.all(3),
+                            child: FittedBox(child: Text("2")
+                                //      BlocBuilder<CardBloc, CardState>(
+                                //   builder: (context, state) {
+                                //     if (state is InitState) {
+                                //       return Text("00".toString());
+                                //     }
+                                //     if (state is UpdateCardState) {
+                                //       return Text("2");
+                                //     }
+                                //     return const SizedBox();
+                                //   },
+                                // )
+                                ),
                           ),
                         )
                       ],
@@ -135,11 +146,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text("Nike Air Max 270",
-                        style: TextStyle(
+                  children: [
+                    Text("Nike Air Max 270${shoes[currentPage].title}",
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20)),
-                    Text("Men's shoes", style: TextStyle())
+                    const Text("Men's shoes", style: TextStyle())
                   ],
                 )),
             SizedBox(
