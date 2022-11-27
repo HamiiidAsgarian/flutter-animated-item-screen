@@ -1,23 +1,24 @@
+import 'dart:developer' as developer;
 import 'dart:math';
 
+import 'package:animateditems/bloc1.dart';
 import 'package:animateditems/shoe_class.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: HomeScreen());
+    return BlocProvider(
+      create: (context) => CardBloc(),
+      child: const MaterialApp(home: HomeScreen()),
+    );
   }
 }
 
@@ -43,20 +44,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    developer.log("0-MainScreenBuilt");
     Widget item = Center(
         // alignment: Alignment.topCenter,
         child: Item(
       beginingAnimationDirection: lastDragDirection,
       key: Key(currentPage.toString()),
       onAnimationEnd: (CdragDirection direction) {
-        direction == CdragDirection.left ? currentPage-- : currentPage++;
+        if (direction == CdragDirection.right) {
+          switch (currentPage < shoes.length) {
+            case true:
+              currentPage++;
+              break;
+
+            case false:
+              currentPage = 0;
+              break;
+          }
+        }
+        if (direction == CdragDirection.left) {
+          switch (currentPage > 0) {
+            case true:
+              currentPage--;
+              break;
+
+            case false:
+              currentPage = shoes.length;
+              break;
+          }
+        }
         setState(() {
           lastDragDirection = direction;
         });
       },
       child: Text(currentPage.toString()),
     ));
-    print(currentPage);
     return Scaffold(
       body: Container(
         color: Colors.blueGrey[800],
@@ -76,15 +98,33 @@ class _HomeScreenState extends State<HomeScreen> {
                     Stack(
                       children: [
                         MyRoundedButton(
-                            onPress: () {},
+                            onPress: () {
+                              BlocProvider.of<CardBloc>(context).add(
+                                  AddToCardPressed(
+                                      shoe: Shoe(id: Random().nextInt(100))));
+                              print(
+                                  BlocProvider.of<CardBloc>(context).shoesList);
+                            },
                             child: const Icon(Icons.shopping_bag_outlined)),
-                        const CircleAvatar(
-                            backgroundColor: Colors.black,
-                            radius: 10,
-                            child: Padding(
-                                padding: EdgeInsets.all(3),
-                                child: FittedBox(
-                                    child: Text("2", style: TextStyle()))))
+                        CircleAvatar(
+                          backgroundColor: Colors.black,
+                          radius: 10,
+                          child: Padding(
+                            padding: const EdgeInsets.all(3),
+                            child: FittedBox(
+                                child: BlocBuilder<CardBloc, CardState>(
+                              builder: (context, state) {
+                                if (state is InitState) {
+                                  return Text("00".toString());
+                                }
+                                if (state is UpdateCardState) {
+                                  return Text(state.shoes.length.toString());
+                                }
+                                return const SizedBox();
+                              },
+                            )),
+                          ),
+                        )
                       ],
                     )
                   ],
@@ -266,21 +306,18 @@ class MyRoundedButton extends MaterialButton {
   final VoidCallback onPress;
   @override
   Widget build(BuildContext context) {
-    return RawMaterialButton(
-      constraints: const BoxConstraints(minWidth: 40.0, minHeight: 40.0),
-      padding: EdgeInsets.zero,
-      onPressed: () {
-        onPress();
-      },
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-            color: fillColor,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(width: 1.5, color: borderColor!)),
-        child: child,
-      ),
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+          color: fillColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(width: 1.5, color: borderColor!)),
+      child: RawMaterialButton(
+          onPressed: () {
+            onPress();
+          },
+          child: child),
     );
   }
 }
@@ -363,66 +400,65 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
     //     ? Tween(begin: 0, end: 0)
     //     : Tween(begin: -pi / 2, end: 0.0);
 
-    return Container(
-      // color: Color.fromARGB(113, 244, 67, 54),
-      child: TweenAnimationBuilder(
-          tween: beginningTween,
-          curve: Curves.bounceOut,
-          // tween: Tween(begin: -pi / 2, end: 0.0),
-          duration: const Duration(milliseconds: 300),
-          builder: ((context, value, child) => Transform.rotate(
-                angle: value,
-                origin: const Offset(0, -250),
-                // angle: 3.14 * 2,
-                child: GestureDetector(
-                  onHorizontalDragUpdate: (details) {
-                    // print(details.delta.dx);
+    return TweenAnimationBuilder(
+        tween: beginningTween,
+        // curve: Curves.elasticOut,
+        curve: Curves.easeOutBack,
+
+        // tween: Tween(begin: -pi / 2, end: 0.0),
+        duration: const Duration(milliseconds: 500),
+        builder: ((context, value, child) => Transform.rotate(
+              angle: value,
+              origin: const Offset(0, -250),
+              // angle: 3.14 * 2,
+              child: GestureDetector(
+                onHorizontalDragUpdate: (details) {
+                  // print(details.delta.dx);
+                },
+                onHorizontalDragEnd: (details) {
+                  // print(details.primaryVelocity);
+                  if (details.primaryVelocity! < 0.0) {
+                    setState(() {
+                      dragDirectionRes = CdragDirection.left;
+                    });
+                    print("<  $dragDirectionRes");
+                  }
+                  if (details.primaryVelocity! > 0.0) {
+                    setState(() {
+                      dragDirectionRes = CdragDirection.right;
+                    });
+                    // print("> $dragDirectionRes ");
+                  }
+                  if (dragDirectionRes != CdragDirection.na) {
+                    mainAnimCntrl.forward().then((value) {
+                      print("End");
+                      widget.onAnimationEnd(dragDirectionRes);
+                    });
+                  }
+                },
+                child: AnimatedBuilder(
+                  animation: dragDirectionRes == CdragDirection.left
+                      ? itemAnimToLeft
+                      : itemAnimToRight,
+                  builder: (context, child) {
+                    return Transform.rotate(
+                      origin: const Offset(0, -250),
+                      angle: dragDirectionRes == CdragDirection.left
+                          ? itemAnimToLeft.value
+                          : itemAnimToRight.value,
+                      child: Container(
+                        width: 250,
+                        height: 250,
+                        color: Colors.amberAccent
+                            .withOpacity(itemAnimOpacity.value),
+                        child: widget.child,
+                      ),
+                    );
                   },
-                  onHorizontalDragEnd: (details) {
-                    // print(details.primaryVelocity);
-                    if (details.primaryVelocity! < 0.0) {
-                      setState(() {
-                        dragDirectionRes = CdragDirection.left;
-                      });
-                      print("<  $dragDirectionRes");
-                    }
-                    if (details.primaryVelocity! > 0.0) {
-                      setState(() {
-                        dragDirectionRes = CdragDirection.right;
-                      });
-                      // print("> $dragDirectionRes ");
-                    }
-                    if (dragDirectionRes != CdragDirection.na) {
-                      mainAnimCntrl.forward().then((value) {
-                        print("End");
-                        widget.onAnimationEnd(dragDirectionRes);
-                      });
-                    }
-                  },
-                  child: AnimatedBuilder(
-                    animation: dragDirectionRes == CdragDirection.left
-                        ? itemAnimToLeft
-                        : itemAnimToRight,
-                    builder: (context, child) {
-                      return Transform.rotate(
-                        origin: const Offset(0, -250),
-                        angle: dragDirectionRes == CdragDirection.left
-                            ? itemAnimToLeft.value
-                            : itemAnimToRight.value,
-                        child: Container(
-                          width: 250,
-                          height: 250,
-                          color: Colors.amberAccent
-                              .withOpacity(itemAnimOpacity.value),
-                          child: widget.child,
-                        ),
-                      );
-                    },
-                    //
-                  ),
+                  //
                 ),
-              ))),
-    );
+              ),
+            )));
   }
 }
 
