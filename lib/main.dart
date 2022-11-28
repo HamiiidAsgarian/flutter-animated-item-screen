@@ -1,10 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer' as developer;
 import 'dart:math';
 
-import 'package:animateditems/bloc1.dart';
-import 'package:animateditems/shoe_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:animateditems/bloc1.dart';
+import 'package:animateditems/shoe_class.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,311 +26,360 @@ class MyApp extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-//   @override
-//   State<HomeScreen> createState() => _HomeScreenState();
-// }
-
-// class _HomeScreenState extends State<HomeScreen> {
-  // final CdragDirection lastDragDirection;
-  // final int currentPage;
-  // final List<Shoe> shoes;
-
-  // @override
-  // void initState() {
-  //   currentPage = 0;
-  //   lastDragDirection = CdragDirection.na;
-
-  //   // shoes = products.map((e) => Shoe.fromMap(e)).toList();
-  //   super.initState();
-  // }
-
   @override
   Widget build(BuildContext context) {
     CardState blocState = BlocProvider.of<CardBloc>(context).state;
     var shoes = blocState.shoesMap ?? [];
-    var currentPage = blocState.currentPage ?? 0;
-    var lastDragDirection = blocState.lastDragDirection ?? CdragDirection.na;
-
-    // print(shoes.length);
 
     developer.log("0-MainScreenBuilt");
-    Widget item = Center(
-        // alignment: Alignment.topCenter,
-        child: Item(
-      beginingAnimationDirection: lastDragDirection,
-      key: Key(currentPage.toString()),
-      onAnimationEnd: (CdragDirection direction) {
-        if (direction == CdragDirection.right) {
-          switch (currentPage < shoes.length - 1) {
-            case true:
-              currentPage++;
-              break;
-
-            case false:
-              currentPage = 0;
-              break;
-          }
-        }
-        if (direction == CdragDirection.left) {
-          switch (currentPage > 0) {
-            case true:
-              currentPage--;
-              break;
-
-            case false:
-              currentPage = shoes.length - 1;
-              break;
-          }
-        }
-        setState(() {
-          lastDragDirection = direction;
-        });
-        print(currentPage);
-      },
-      child: Text(shoes[currentPage].title ?? "NA"),
-    ));
 
     return Scaffold(
       body: Container(
         color: Colors.blueGrey[800],
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-        child: Column(
-          children: [
-            Container(
-                height: 50,
-                color: Colors.yellow,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MyRoundedButton(
-                        onPress: () {},
-                        child: const Icon(Icons.arrow_back_outlined)),
-                    const FlutterLogo(),
-                    Stack(
-                      children: [
-                        MyRoundedButton(
-                            onPress: () {
-                              // BlocProvider.of<CardBloc>(context).add(
-                              //     AddToCardPressed(
-                              //         shoe: Shoe(id: Random().nextInt(100))));
-                              // print(
-                              //     BlocProvider.of<CardBloc>(context).shoesList);
-                            },
-                            child: const Icon(Icons.shopping_bag_outlined)),
-                        const CircleAvatar(
-                          backgroundColor: Colors.black,
-                          radius: 10,
-                          child: Padding(
-                            padding: EdgeInsets.all(3),
-                            child: FittedBox(child: Text("2")
-                                //      BlocBuilder<CardBloc, CardState>(
-                                //   builder: (context, state) {
-                                //     if (state is InitState) {
-                                //       return Text("00".toString());
-                                //     }
-                                //     if (state is UpdateCardState) {
-                                //       return Text("2");
-                                //     }
-                                //     return const SizedBox();
-                                //   },
-                                // )
-                                ),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                )),
-            Container(
-                height: 50,
-                color: Colors.orange,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Nike Air Max 270${shoes[currentPage].title}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20)),
-                    const Text("Men's shoes", style: TextStyle())
-                  ],
-                )),
-            SizedBox(
-              height: 500,
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Container(
-                    color: Colors.red,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          color: Colors.amberAccent,
-                          child: Column(
-                            children: [
-                              const Text("size", style: TextStyle()),
-                              MyRoundedButton(
-                                onPress: () {},
-                                child: const Center(
-                                  child: Text("9",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15)),
-                                ),
-                              ),
-                              MyRoundedButton(
-                                onPress: () {},
-                                child: const Center(
-                                  child: Text("8.5",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15)),
-                                ),
-                              ),
-                              MyRoundedButton(
-                                onPress: () {},
-                                child: const Center(
-                                  child: Text("9.5",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15)),
-                                ),
-                              ),
-                              MyRoundedButton(
-                                onPress: () {},
-                                child: const Center(
-                                  child: Text("8",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          color: const Color.fromARGB(255, 220, 255, 64),
-                          child: Column(
-                            children: const [
-                              Text("170\$",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20)),
-                              Text("Price",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12))
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  )),
-                  Expanded(
-                      flex: 4,
-                      child: Container(color: Colors.green, child: item)),
-                  Expanded(
-                      child: Container(
-                    color: Colors.blue,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          color: Colors.amberAccent,
-                          child: Column(
-                            children: [
-                              MyRoundedButton(
-                                onPress: () {},
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.favorite_border_outlined,
-                                    size: 23,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          color: const Color.fromARGB(255, 220, 255, 64),
-                          child: Column(
-                            children: [
-                              MyRoundedButton(onPress: () {}),
-                              MyRoundedButton(onPress: () {}),
-                              const Text("Color",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12))
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  )),
-                ],
-                // child: Column(
-                //   children: [
-                //     Expanded(child: item),
-                //     Expanded(
-                //         child: Column(
-                //       children: [
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             FloatingActionButton(onPressed: () {
-                //               setState(() {
-                //                 currentPage--;
-                //                 lastDragDirection = CdragDirection.left;
-                //               });
-                //             }),
-                //             FloatingActionButton(onPressed: () {
-                //               setState(() {
-                //                 currentPage++;
-                //                 lastDragDirection = CdragDirection.right;
-                //               });
-                //             })
-                //           ],
-                //         )
-                //       ],
-                //     ))
-                //   ],
-                // ),
-              ),
-            ),
-          ],
+        child: BlocBuilder<CardBloc, CardState>(
+          builder: (context, state) {
+            // state.
+            return Column(
+              children: [
+                AppBarSection(
+                  shoe: shoes[state.currentPage ?? 0],
+                  cardItemsNumber: 0,
+                ),
+                TitleSection(shoe: shoes[state.currentPage ?? 0]),
+                ItemSection(
+                  lastDragDirection:
+                      state.lastDragDirection ?? CdragDirection.na,
+                  currentPage: state.currentPage ?? 0,
+                  shoe: shoes[state.currentPage ?? 0],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 }
 
-class MyRoundedButton extends MaterialButton {
-  const MyRoundedButton(
-      {super.key,
-      super.onPressed,
-      required this.onPress,
-      this.borderColor = Colors.blueGrey,
-      this.fillColor = const Color.fromARGB(0, 255, 255, 255),
-      super.child});
-  final Color? borderColor;
-  final Color? fillColor;
-  // final Widget? child;
-  final VoidCallback onPress;
+class ItemSection extends StatelessWidget {
+  const ItemSection({
+    Key? key,
+    required this.lastDragDirection,
+    required this.currentPage,
+    required this.shoe,
+  }) : super(key: key);
+  final CdragDirection lastDragDirection;
+  final int currentPage;
+
+  final Shoe shoe;
+  // final Widget item;
+
+  @override
+  Widget build(BuildContext context) {
+    developer.log("1-ItemSection buid");
+    Widget item = Center(
+      child: Item(
+        beginingAnimationDirection: lastDragDirection,
+        key: Key(currentPage.toString()),
+        onAnimationEnd: (CdragDirection direction) {
+          BlocProvider.of<CardBloc>(context)
+              .add(OnAnimationEnds(direction: direction));
+        },
+        // child: Text(shoe.title ?? "NA"),
+        child: Image.asset(shoe.imageUrl ?? ""),
+      ),
+    );
+    return SizedBox(
+      height: 500,
+      child: Row(
+        children: [
+          Container(
+            color: Colors.red,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  color: Colors.amberAccent,
+                  child: Column(
+                    children: [
+                      const Text("size", style: TextStyle()),
+                      ...shoe.sizes!
+                          .map((e) => TweenAnimationBuilder(
+                                key: UniqueKey(),
+                                duration: const Duration(milliseconds: 600),
+                                tween: Tween(begin: -10.0, end: 0.0),
+                                curve: Curves.easeOutBack,
+                                builder: (context, value, child) =>
+                                    Transform.translate(
+                                  offset: Offset(value, 0),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 5),
+                                    child: MyRoundedButton(
+                                        fillColor: Colors.white,
+                                        onPress: () {},
+                                        child: Text("$e",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15))),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                      // MyRoundedButton(
+                      //   onPress: () {},
+                      //   child: const Center(
+                      //     child: ,
+                      //   ),
+                      // ),
+                      // MyRoundedButton(
+                      //   onPress: () {},
+                      //   child: const Center(
+                      //     child: Text("8.5",
+                      //         style: TextStyle(
+                      //             fontWeight: FontWeight.bold, fontSize: 15)),
+                      //   ),
+                      // ),
+                      // MyRoundedButton(
+                      //   onPress: () {},
+                      //   child: const Center(
+                      //     child: Text("9.5",
+                      //         style: TextStyle(
+                      //             fontWeight: FontWeight.bold, fontSize: 15)),
+                      //   ),
+                      // ),
+                      // MyRoundedButton(
+                      //   onPress: () {},
+                      //   child: const Center(
+                      //     child: Text("8",
+                      //         style: TextStyle(
+                      //             fontWeight: FontWeight.bold, fontSize: 15)),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
+                Container(
+                  color: const Color.fromARGB(255, 220, 255, 64),
+                  child: Column(
+                    children: const [
+                      Text("170\$",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20)),
+                      Text("Price",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12))
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+              flex: 4,
+              child: Container(
+                  color: Colors.green,
+                  child: Stack(children: [
+                    RotatedBox(
+                      quarterTurns: 1,
+                      child: TweenAnimationBuilder(
+                        key: UniqueKey(),
+                        tween: Tween(begin: 0.1, end: 1.2),
+                        duration: const Duration(seconds: 2),
+                        curve:
+                            const Interval(0.0, 1.0, curve: Curves.easeOutQuad),
+                        builder: (context, value, child) => Transform.scale(
+                          scale: value,
+                          child: Container(
+                            margin: const EdgeInsets.all(50),
+                            width: double.infinity,
+                            height: double.infinity,
+                            // color: Colors.purple,
+                            child: Opacity(
+                                opacity: (value / 10),
+                                child: Image.asset(shoe.logoUrl ?? "")),
+                          ),
+                        ),
+                      ),
+                    ),
+                    item
+                  ]))),
+          Container(
+            color: Colors.blue,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  color: Colors.amberAccent,
+                  child: Column(
+                    children: [
+                      MyRoundedButton(
+                        onPress: () {},
+                        child: const Center(
+                          child: Icon(
+                            Icons.favorite_border_outlined,
+                            size: 23,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  color: const Color.fromARGB(255, 220, 255, 64),
+                  child: Column(
+                    children: [
+                      MyRoundedButton(onPress: () {}),
+                      MyRoundedButton(onPress: () {}),
+                      const Text("Color",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12))
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TitleSection extends StatelessWidget {
+  const TitleSection({
+    Key? key,
+    required this.shoe,
+  }) : super(key: key);
+
+  final Shoe shoe;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-          color: fillColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1.5, color: borderColor!)),
-      child: RawMaterialButton(
-          onPressed: () {
-            onPress();
-          },
-          child: child),
+        height: 50,
+        color: Colors.orange,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Nike Air Max 270${shoe.title}",
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            Text("Men's shoes ${shoe.category}", style: const TextStyle())
+          ],
+        ));
+  }
+}
+
+class AppBarSection extends StatelessWidget {
+  const AppBarSection({
+    required this.cardItemsNumber,
+    required this.shoe,
+    Key? key,
+  }) : super(key: key);
+  final Shoe shoe;
+  final int cardItemsNumber;
+
+  @override
+  Widget build(BuildContext context) {
+    developer.log("3-Logo sec build");
+    return Container(
+        height: 50,
+        color: Colors.yellow,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            MyRoundedButton(
+                onPress: () {}, child: const Icon(Icons.arrow_back_outlined)),
+            TweenAnimationBuilder(
+                key: UniqueKey(),
+                duration: const Duration(milliseconds: 300),
+                tween: Tween(begin: 100.0, end: 0.0),
+                curve: Curves.easeOutBack,
+                builder: (context, value, child) {
+                  return Transform.translate(
+                    offset: Offset(value, 0),
+                    child: Container(
+                        // color: Colors.red,
+                        child: Opacity(
+                            opacity: 1,
+                            child: Image.asset(shoe.logoUrl ?? ""))),
+                  );
+                }),
+            Stack(
+              children: [
+                MyRoundedButton(
+                    onPress: () {
+                      // BlocProvider.of<CardBloc>(context).add(
+                      //     AddToCardPressed(
+                      //         shoe: Shoe(id: Random().nextInt(100))));
+                      // print(
+                      //     BlocProvider.of<CardBloc>(context).shoesList);
+                    },
+                    child: const Icon(Icons.shopping_bag_outlined)),
+                CircleAvatar(
+                  backgroundColor: Colors.black,
+                  radius: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: FittedBox(child: Text("$cardItemsNumber")),
+                  ),
+                )
+              ],
+            )
+          ],
+        ));
+  }
+}
+
+class MyRoundedButton extends StatefulWidget {
+  const MyRoundedButton(
+      {super.key,
+      // this.onPressed,
+      required this.onPress,
+      this.borderColor = Colors.blueGrey,
+      this.fillColor = const Color.fromARGB(0, 255, 255, 255),
+      this.child});
+  final Color? borderColor;
+  final Color? fillColor;
+  final Widget? child;
+  final Function onPress;
+  @override
+  State<MyRoundedButton> createState() => _MyRoundedButtonState();
+}
+
+class _MyRoundedButtonState extends State<MyRoundedButton> {
+  bool isActive = false;
+// class MyRoundedButton extends StatefulWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder(
+      key: UniqueKey(),
+      tween: Tween(begin: 1.5, end: 5.0),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.bounceOut,
+      builder: (context, value, child) => Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+            color: widget.fillColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                width: isActive ? value : 1.5, color: widget.borderColor!)),
+        child: RawMaterialButton(
+            onPressed: () {
+              setState(() {
+                isActive = !isActive;
+              });
+              widget.onPress();
+            },
+            child: widget.child),
+      ),
     );
   }
 }
@@ -369,7 +420,7 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
 
     itemAnimToLeft = Tween(
       begin: 0.0,
-      end: pi / 2,
+      end: pi / 3,
 
       // begin: widget.beginingAnimationDirection == null ? 0.0 : -pi / 2,
       // end: widget.beginingAnimationDirection == null ? pi / 2 : 00,
@@ -377,7 +428,7 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
 
     itemAnimToRight = Tween(
       begin: 0.0,
-      end: -pi / 2,
+      end: -pi / 3,
 
       // begin: widget.beginingAnimationDirection == null ? 0.0 : pi / 2,
       // end: widget.beginingAnimationDirection == null ? -pi / 2 : 0.0,
@@ -386,23 +437,30 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
     itemAnimOpacity = Tween(
       begin: 1.0,
       end: 0.0,
-    ).animate(CurvedAnimation(parent: mainAnimCntrl, curve: Curves.easeInOut));
+    ).animate(CurvedAnimation(
+        parent: mainAnimCntrl,
+        curve: const Interval(0.0, 1.0, curve: Curves.easeInOut)));
     WidgetsBinding.instance.addPostFrameCallback((_) {});
 
     // if (widget.beginingAnimationDirection != null) {
     //   dragDirectionRes = widget.beginingAnimationDirection!;
     //   mainAnimCntrl.forward();
     // }
-
     if (widget.beginingAnimationDirection == null) {
       beginningTween = Tween(begin: 0, end: 0);
     } else if (widget.beginingAnimationDirection == CdragDirection.left) {
-      beginningTween = Tween(begin: -pi / 2, end: 0.0);
+      beginningTween = Tween(begin: -pi / 3, end: 0.0);
     } else if (widget.beginingAnimationDirection == CdragDirection.right) {
-      beginningTween = Tween(begin: pi / 2, end: 0.0);
+      beginningTween = Tween(begin: pi / 3, end: 0.0);
     }
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    mainAnimCntrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -432,7 +490,6 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
                     setState(() {
                       dragDirectionRes = CdragDirection.left;
                     });
-                    print("<  $dragDirectionRes");
                   }
                   if (details.primaryVelocity! > 0.0) {
                     setState(() {
@@ -442,7 +499,6 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
                   }
                   if (dragDirectionRes != CdragDirection.na) {
                     mainAnimCntrl.forward().then((value) {
-                      print("End");
                       widget.onAnimationEnd(dragDirectionRes);
                     });
                   }
@@ -457,12 +513,16 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
                       angle: dragDirectionRes == CdragDirection.left
                           ? itemAnimToLeft.value
                           : itemAnimToRight.value,
-                      child: Container(
-                        width: 250,
-                        height: 250,
-                        color: Colors.amberAccent
-                            .withOpacity(itemAnimOpacity.value),
-                        child: widget.child,
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        // width: 500,
+                        // height: 500,
+                        // color: Colors.amberAccent,
+                        //     .withOpacity(itemAnimOpacity.value),
+                        child: Opacity(
+                            opacity: itemAnimOpacity.value,
+                            child: Transform.rotate(
+                                angle: -pi / 4, child: widget.child)),
                       ),
                     );
                   },

@@ -12,7 +12,7 @@ class Shoe {
   final String? category;
   final String? imageUrl;
   final String? brandName;
-  final String? brandLogo;
+  final String? logoUrl;
 
   Shoe({
     this.id,
@@ -23,7 +23,7 @@ class Shoe {
     this.price,
     this.imageUrl,
     this.brandName,
-    this.brandLogo,
+    this.logoUrl,
   });
   factory Shoe.fromMap(Map<String, dynamic> map) {
     return Shoe(
@@ -35,7 +35,7 @@ class Shoe {
         category: map['category'] as String,
         imageUrl: map['imageUrl'] as String,
         brandName: map['brandName'] as String,
-        brandLogo: map['brandLogo'] as String);
+        logoUrl: map['LogoUrl'] as String);
   }
   // Map<String, dynamic> toMap() {
   //   return <String, dynamic>{
@@ -46,7 +46,7 @@ class Shoe {
   //     'category': category,
   //     'imageUrl': imageUrl,
   //     'brandName': brandName,
-  //     'brandLogo': brandLogo,
+  //     'LogoUrl': LogoUrl,
   //   };
   // }
 
@@ -59,7 +59,7 @@ class Shoe {
   //     map['category'] as String,
   //     map['imageUrl'] as String,
   //     map['brandName'] as String,
-  //     map['brandLogo'] as String
+  //     map['LogoUrl'] as String
   //   );
   // }
 
@@ -70,7 +70,7 @@ class Shoe {
 
   // @override
   // String toString() {
-  //   return 'ShoeClass(colors: $colors, sizes: $sizes, price: $price, title: $title, category: $category, imageUrl: $imageUrl, brandName: $brandName, brandLogo: $brandLogo)';
+  //   return 'ShoeClass(colors: $colors, sizes: $sizes, price: $price, title: $title, category: $category, imageUrl: $imageUrl, brandName: $brandName, LogoUrl: $LogoUrl)';
   // }
 
   // @override
@@ -84,7 +84,7 @@ class Shoe {
   //       other.category == category &&
   //       other.imageUrl == imageUrl &&
   //       other.brandName == brandName &&
-  //       other.brandLogo == brandLogo;
+  //       other.LogoUrl == LogoUrl;
   // }
 
   // @override
@@ -96,7 +96,7 @@ class Shoe {
   //       category.hashCode ^
   //       imageUrl.hashCode ^
   //       brandName.hashCode ^
-  //       brandLogo.hashCode;
+  //       LogoUrl.hashCode;
   // }
 }
 
@@ -108,30 +108,30 @@ List<Map<String, dynamic>> products = [
     "sizes": [1, 2, 5, 6],
     "colors": ["red", "green", "blue"],
     "price": 54545.0,
-    "brandName": "asdasd",
-    "imageUrl": "asdasda",
-    "brandLogo": "asdasdas"
+    "brandName": "Nike",
+    "imageUrl": "assets/images/shoes/n1.png",
+    "LogoUrl": "assets/images/logos/nikeLogo.png"
   },
   {
     "id": 2,
     "title": "sh2",
     "category": "asdasd",
-    "sizes": [1, 2, 5, 6],
+    "sizes": [0, 9, 6],
     "colors": ["red", "green", "blue"],
     "price": 54545.0,
-    "brandName": "asdasd",
-    "imageUrl": "asdasda",
-    "brandLogo": "asdasdas"
+    "brandName": "Puma",
+    "imageUrl": "assets/images/shoes/r1.png",
+    "LogoUrl": "assets/images/logos/pumaLogo.png"
   },
   {
     "id": 3,
     "title": "sh3",
     "category": "asdasd",
-    "sizes": [1, 2, 5, 6],
+    "sizes": [9, 6],
     "colors": ["red", "green", "blue"],
     "price": 54545.0,
-    "brandName": "asdasd",
-    "imageUrl": "asdasda",
-    "brandLogo": "asdasdas"
+    "brandName": "Rebook",
+    "imageUrl": "assets/images/shoes/p1.png",
+    "LogoUrl": "assets/images/logos/rebookLogo.png"
   }
 ];
