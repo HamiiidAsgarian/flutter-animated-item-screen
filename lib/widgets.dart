@@ -42,7 +42,7 @@ class MyRoundedButton extends StatelessWidget {
             // setState(() {
             //   isActive = !isActive;
             // });
-            onPress(index);
+            onPress(index ?? 0);
           },
         ),
       ),
@@ -146,8 +146,10 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
               angle: value,
               origin: const Offset(0, -250),
               // angle: 3.14 * 2,
-              child: Container(
-                color: Colors.purple,
+              child: SizedBox(
+                // height: 5000,
+                // width: 5000,
+                // color: Colors.purple,
                 child: GestureDetector(
                   onHorizontalDragUpdate: (details) {
                     // print(details.delta.dx);
