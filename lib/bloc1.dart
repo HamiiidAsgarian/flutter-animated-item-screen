@@ -1,5 +1,5 @@
 import 'package:animateditems/shoe_class.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:animateditems/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'main.dart';

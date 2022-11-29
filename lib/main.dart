@@ -1,12 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer' as developer;
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:animateditems/bloc1.dart';
 import 'package:animateditems/shoe_class.dart';
+import 'package:animateditems/widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CardBloc(),
-      child: const MaterialApp(home: HomeScreen()),
+      child: const MaterialApp(home: SafeArea(child: HomeScreen())),
     );
   }
 }
@@ -105,29 +105,18 @@ class ItemSection extends StatelessWidget {
                   child: Column(
                     children: [
                       const Text("size", style: TextStyle()),
-                      ...shoe.sizes!
-                          .map((e) => TweenAnimationBuilder(
-                                key: UniqueKey(),
-                                duration: const Duration(milliseconds: 600),
-                                tween: Tween(begin: -10.0, end: 0.0),
-                                curve: Curves.easeOutBack,
-                                builder: (context, value, child) =>
-                                    Transform.translate(
-                                  offset: Offset(value, 0),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 5),
-                                    child: MyRoundedButton(
-                                        fillColor: Colors.white,
-                                        onPress: () {},
-                                        child: Text("$e",
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15))),
-                                  ),
-                                ),
-                              ))
-                          .toList(),
+
+                      TweenAnimationBuilder(
+                        key: UniqueKey(),
+                        duration: const Duration(milliseconds: 600),
+                        tween: Tween(begin: -10.0, end: 0.0),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) => Transform.translate(
+                          offset: Offset(value, 0),
+                          child: OptionBoxes(items: shoe.sizes ?? []),
+                        ),
+                      )
+
                       // MyRoundedButton(
                       //   onPress: () {},
                       //   child: const Center(
@@ -164,11 +153,22 @@ class ItemSection extends StatelessWidget {
                 Container(
                   color: const Color.fromARGB(255, 220, 255, 64),
                   child: Column(
-                    children: const [
-                      Text("170\$",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20)),
-                      Text("Price",
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TweenAnimationBuilder(
+                        key: UniqueKey(),
+                        duration: Duration(seconds: 1),
+                        tween: Tween(begin: 0.5, end: 1.0),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) => Transform.scale(
+                          scale: value,
+                          child: Text("${shoe.price}\$",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20)),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      const Text("Price",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 12))
                     ],
@@ -216,6 +216,8 @@ class ItemSection extends StatelessWidget {
                   color: Colors.amberAccent,
                   child: Column(
                     children: [
+                      Text("Fav"),
+                      SizedBox(height: 5),
                       MyRoundedButton(
                         onPress: () {},
                         child: const Center(
@@ -231,9 +233,20 @@ class ItemSection extends StatelessWidget {
                 Container(
                   color: const Color.fromARGB(255, 220, 255, 64),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      MyRoundedButton(onPress: () {}),
-                      MyRoundedButton(onPress: () {}),
+                      TweenAnimationBuilder(
+                        key: UniqueKey(),
+                        duration: const Duration(milliseconds: 800),
+                        tween: Tween(begin: 10.0, end: 0.0),
+                        curve:
+                            const Interval(0.0, 1.0, curve: Curves.easeOutBack),
+                        builder: (context, value, child) => Transform.translate(
+                          offset: Offset(value, 0),
+                          child: OptionBoxes(items: shoe.colors ?? []),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       const Text("Color",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 12))
@@ -260,18 +273,31 @@ class TitleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 50,
-        color: Colors.orange,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Nike Air Max 270${shoe.title}",
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            Text("Men's shoes ${shoe.category}", style: const TextStyle())
-          ],
-        ));
+      height: 50,
+      color: Colors.orange,
+      child: TweenAnimationBuilder(
+        key: UniqueKey(),
+        duration: Duration(seconds: 1),
+        tween: Tween(begin: 0.4, end: 0.9),
+        curve: Curves.easeOutBack,
+        builder: (context, value, child) => Transform.scale(
+          scale: value,
+          child: Opacity(
+            opacity: value,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("${shoe.title}",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20)),
+                Text(" ${shoe.category}", style: const TextStyle())
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -336,234 +362,62 @@ class AppBarSection extends StatelessWidget {
   }
 }
 
-class MyRoundedButton extends StatefulWidget {
-  const MyRoundedButton(
-      {super.key,
-      // this.onPressed,
-      required this.onPress,
-      this.borderColor = Colors.blueGrey,
-      this.fillColor = const Color.fromARGB(0, 255, 255, 255),
-      this.child});
-  final Color? borderColor;
-  final Color? fillColor;
-  final Widget? child;
-  final Function onPress;
+class OptionBoxes extends StatefulWidget {
+  const OptionBoxes({
+    Key? key,
+    required this.items,
+  }) : super(key: key);
+
+  final List items;
   @override
-  State<MyRoundedButton> createState() => _MyRoundedButtonState();
+  State<OptionBoxes> createState() => _OptionBoxesState();
 }
 
-class _MyRoundedButtonState extends State<MyRoundedButton> {
-  bool isActive = false;
-// class MyRoundedButton extends StatefulWidget {
+class _OptionBoxesState extends State<OptionBoxes> {
+  int? selectedboxID;
 
   @override
   Widget build(BuildContext context) {
-    return TweenAnimationBuilder(
-      key: UniqueKey(),
-      tween: Tween(begin: 1.5, end: 5.0),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.bounceOut,
-      builder: (context, value, child) => Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-            color: widget.fillColor,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-                width: isActive ? value : 1.5, color: widget.borderColor!)),
-        child: RawMaterialButton(
-            onPressed: () {
-              setState(() {
-                isActive = !isActive;
-              });
-              widget.onPress();
-            },
-            child: widget.child),
-      ),
-    );
-  }
-}
-
-class Item extends StatefulWidget {
-  const Item(
-      {this.child,
-      this.beginingAnimationDirection,
-      required this.onAnimationEnd,
-      super.key});
-  final Function onAnimationEnd;
-  final CdragDirection? beginingAnimationDirection;
-  final Widget? child;
-
-  @override
-  State<Item> createState() => _ItemState();
-}
-
-class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
-  late CdragDirection dragDirectionRes = CdragDirection.na;
-
-  late AnimationController mainAnimCntrl;
-  late Animation itemAnimToLeft;
-  late Animation itemAnimToRight;
-
-  late Animation itemAnimOpacity;
-  // late Animation itemOpacityTweenPrevious;
-
-  // late Animation itemTweenBackward;
-
-  double tempAngle = 0;
-  Tween<double> beginningTween = Tween(begin: 0, end: 0);
-
-  @override
-  void initState() {
-    mainAnimCntrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-
-    itemAnimToLeft = Tween(
-      begin: 0.0,
-      end: pi / 3,
-
-      // begin: widget.beginingAnimationDirection == null ? 0.0 : -pi / 2,
-      // end: widget.beginingAnimationDirection == null ? pi / 2 : 00,
-    ).animate(CurvedAnimation(parent: mainAnimCntrl, curve: Curves.easeInOut));
-
-    itemAnimToRight = Tween(
-      begin: 0.0,
-      end: -pi / 3,
-
-      // begin: widget.beginingAnimationDirection == null ? 0.0 : pi / 2,
-      // end: widget.beginingAnimationDirection == null ? -pi / 2 : 0.0,
-    ).animate(CurvedAnimation(parent: mainAnimCntrl, curve: Curves.easeInOut));
-
-    itemAnimOpacity = Tween(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-        parent: mainAnimCntrl,
-        curve: const Interval(0.0, 1.0, curve: Curves.easeInOut)));
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
-
-    // if (widget.beginingAnimationDirection != null) {
-    //   dragDirectionRes = widget.beginingAnimationDirection!;
-    //   mainAnimCntrl.forward();
-    // }
-    if (widget.beginingAnimationDirection == null) {
-      beginningTween = Tween(begin: 0, end: 0);
-    } else if (widget.beginingAnimationDirection == CdragDirection.left) {
-      beginningTween = Tween(begin: -pi / 3, end: 0.0);
-    } else if (widget.beginingAnimationDirection == CdragDirection.right) {
-      beginningTween = Tween(begin: pi / 3, end: 0.0);
-    }
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    mainAnimCntrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Tween beginningTween = widget.beginingAnimationDirection == null
-    //     ? Tween(begin: 0, end: 0)
-    //     : Tween(begin: -pi / 2, end: 0.0);
-
-    return TweenAnimationBuilder(
-        tween: beginningTween,
-        // curve: Curves.elasticOut,
-        curve: Curves.easeOutBack,
-
-        // tween: Tween(begin: -pi / 2, end: 0.0),
-        duration: const Duration(milliseconds: 500),
-        builder: ((context, value, child) => Transform.rotate(
-              angle: value,
-              origin: const Offset(0, -250),
-              // angle: 3.14 * 2,
-              child: GestureDetector(
-                onHorizontalDragUpdate: (details) {
-                  // print(details.delta.dx);
-                },
-                onHorizontalDragEnd: (details) {
-                  // print(details.primaryVelocity);
-                  if (details.primaryVelocity! < 0.0) {
-                    setState(() {
-                      dragDirectionRes = CdragDirection.left;
-                    });
-                  }
-                  if (details.primaryVelocity! > 0.0) {
-                    setState(() {
-                      dragDirectionRes = CdragDirection.right;
-                    });
-                    // print("> $dragDirectionRes ");
-                  }
-                  if (dragDirectionRes != CdragDirection.na) {
-                    mainAnimCntrl.forward().then((value) {
-                      widget.onAnimationEnd(dragDirectionRes);
-                    });
-                  }
-                },
-                child: AnimatedBuilder(
-                  animation: dragDirectionRes == CdragDirection.left
-                      ? itemAnimToLeft
-                      : itemAnimToRight,
-                  builder: (context, child) {
-                    return Transform.rotate(
-                      origin: const Offset(0, -250),
-                      angle: dragDirectionRes == CdragDirection.left
-                          ? itemAnimToLeft.value
-                          : itemAnimToRight.value,
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        // width: 500,
-                        // height: 500,
-                        // color: Colors.amberAccent,
-                        //     .withOpacity(itemAnimOpacity.value),
-                        child: Opacity(
-                            opacity: itemAnimOpacity.value,
-                            child: Transform.rotate(
-                                angle: -pi / 4, child: widget.child)),
-                      ),
-                    );
-                  },
-                  //
-                ),
+    List<Widget> children = [];
+    for (int i = 0; i < widget.items.length; i++) {
+      if (widget.items is List<Color>) {
+        children.add(Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: MyRoundedButton(
+              isActive: selectedboxID == i ? true : false,
+              index: i,
+              child: CircleAvatar(
+                backgroundColor: widget.items[i],
+                radius: 10,
               ),
-            )));
+              onPress: (int index) {
+                setState(() {
+                  selectedboxID = index;
+                });
+              }),
+        ));
+      } else {
+        children.add(Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: MyRoundedButton(
+              isActive: selectedboxID == i ? true : false,
+              index: i,
+              child: Text("${widget.items[i]}"),
+              onPress: (int index) {
+                setState(() {
+                  selectedboxID = index;
+                });
+              }),
+        ));
+      }
+    }
+    return Column(children: children
+        // .map((e) => MyRoundedButton(onPress: (int buttonIndex) {
+        //       setState(() {
+        //         selectedboxID = buttonIndex;
+        //       });
+        //     }))
+        // .toList()
+        );
   }
 }
-
-enum CdragDirection { left, right, na }
-
-// class MyWidget extends StatefulWidget {
-//   const MyWidget({super.key});
-
-//   @override
-//   State<MyWidget> createState() => _MyWidgetState();
-// }
-
-// class _MyWidgetState extends State<MyWidget> {
-//   late int dimension;
-
-//   @override
-//   void initState() {
-//     dimension = 0;
-//     super.initState();
-//   }
-
-//   @override
-//   void dispose() async {
-//     dimension = 5;
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AnimatedContainer(
-//       color: Color.fromARGB(255, Random().nextInt(255), 200, 0),
-//       duration: Duration(seconds: 1),
-//       width: dimension.toDouble(),
-//       height: dimension.toDouble(),
-//     );
-//   }
-// }
