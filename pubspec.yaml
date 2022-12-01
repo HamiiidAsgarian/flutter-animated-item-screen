@@ -37,6 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_bloc: ^8.1.1
+  rive: ^0.9.1
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,9 @@ flutter:
     - assets/images/logos/nikeLogo.png
     - assets/images/logos/pumaLogo.png
     - assets/images/logos/rebookLogo.png
+
+    - assets/animations/packing.riv
+
 
 
     # - images/a_dot_ham.jpeg

@@ -8,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animateditems/bloc1.dart';
 import 'package:animateditems/shoe_class.dart';
 import 'package:animateditems/widgets.dart';
+import 'package:rive/rive.dart' as rive;
+// import '';
 
 void main() {
   runApp(const MyApp());
@@ -65,12 +67,169 @@ class HomeScreen extends StatelessWidget {
                   currentPage: state.currentPage ?? 0,
                   shoe: shoes[state.currentPage ?? 0],
                 ),
+                AddToBasketSection(shoe: shoes[state.currentPage ?? 0])
               ],
             );
           },
         ),
       ),
     );
+  }
+}
+
+class AddToBasketSection extends StatefulWidget {
+  const AddToBasketSection({Key? key, required this.shoe}) : super(key: key);
+  final Shoe shoe;
+
+  @override
+  State<AddToBasketSection> createState() => _AddToBasketSectionState();
+}
+
+class _AddToBasketSectionState extends State<AddToBasketSection>
+    with SingleTickerProviderStateMixin {
+  double swipeStartValue = 0;
+  double swipeUpdateValue = -1;
+
+  bool _isPlaying = false;
+
+  late rive.RiveAnimationController _controller;
+  late AnimationController swipeReturnAnimCNTR;
+  late Animation returnToPosition;
+
+  @override
+  void initState() {
+    // _controller = rive.SimpleAnimation('Boxing');
+    _controller = rive.OneShotAnimation(
+      'PackingTimeline',
+      autoplay: false,
+      // onStop: () => setState(() => _isPlaying = false),
+      onStart: () => setState(() => _isPlaying = false),
+    );
+    swipeReturnAnimCNTR = AnimationController(
+        duration: const Duration(milliseconds: 600), vsync: this);
+    returnToPosition = Tween(begin: 0.0, end: 0.1).animate(CurvedAnimation(
+        parent: swipeReturnAnimCNTR, curve: Curves.easeOutBack));
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: Container(
+      height: 300,
+      color: const Color.fromARGB(255, 255, 186, 209),
+      child: Stack(
+        children: [
+          Center(
+            child: AspectRatio(
+              aspectRatio: 1.6,
+              child: Container(
+                // height: 200,
+                // width: MediaQuery.of(context).size.width - 100,
+                color: Colors.red,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                      // width: double.infinity,
+                      // height: 300,
+                      child: rive.RiveAnimation.asset(
+                    "assets/animations/packing.riv",
+                    fit: BoxFit.fill,
+                    controllers: [_controller],
+                    onInit: (p0) {
+                      setState(() {});
+                    },
+                  )),
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: const Alignment(0, -1),
+            child: Column(
+              children: [
+                const Text("Add to basket"),
+                Container(
+                    padding: const EdgeInsets.all(10),
+                    width: 60,
+                    height: 100,
+                    decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: [0.5, 0.9],
+                          colors: [
+                            Color.fromARGB(255, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Stack(children: [
+                      // const RiveAnimation.asset("assets/animations/packing.riv"),
+                      const Align(
+                          alignment: Alignment(0, 1),
+                          child: Icon(
+                            Icons.arrow_downward,
+                            color: Colors.white,
+                          )),
+                      GestureDetector(
+                        onVerticalDragStart: (details) {
+                          swipeStartValue = details.localPosition.dy / 20;
+                          // details.localPosition;
+                          print(swipeStartValue);
+                        },
+                        onVerticalDragUpdate: (details) {
+                          swipeReturnAnimCNTR.reset();
+                          setState(() {
+                            swipeUpdateValue =
+                                (((details.localPosition.dy / 20) -
+                                            swipeStartValue) -
+                                        1)
+                                    .clamp(-1, 1);
+
+                            // if (swipeUpdateValue > .5) {
+
+                            _controller.isActive = true;
+                            returnToPosition =
+                                Tween(begin: swipeUpdateValue, end: -1).animate(
+                                    CurvedAnimation(
+                                        parent: swipeReturnAnimCNTR,
+                                        curve: Curves.linear));
+
+                            swipeReturnAnimCNTR.forward();
+                            swipeUpdateValue = -1;
+                            // }
+                          });
+                          print(swipeUpdateValue);
+                          // print(swipeUpdateValue);
+                        },
+                        child: AnimatedBuilder(
+                          animation: swipeReturnAnimCNTR,
+                          builder: (context, child) {
+                            return Align(
+                                alignment: Alignment(
+                                    0,
+                                    swipeReturnAnimCNTR.isAnimating
+                                        ? returnToPosition.value
+                                        : swipeUpdateValue),
+                                child: const CircleAvatar(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 56, 56, 56),
+                                  child: Icon(
+                                    Icons.shopping_bag_outlined,
+                                    color: Colors.white,
+                                  ),
+                                ));
+                          },
+                        ),
+                      ),
+                    ])),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ));
   }
 }
 
@@ -106,7 +265,7 @@ class ItemSection extends StatelessWidget {
       ),
     );
     return SizedBox(
-      height: 500,
+      height: 450,
       child: Stack(
         children: [
           Container(
@@ -227,7 +386,8 @@ class ItemSection extends StatelessWidget {
                                       .contains(shoe))
                                   ? TweenAnimationBuilder(
                                       key: UniqueKey(),
-                                      duration: Duration(milliseconds: 600),
+                                      duration:
+                                          const Duration(milliseconds: 600),
                                       tween: Tween(begin: 20.0, end: 30.0),
                                       curve: Curves.easeOutBack,
                                       builder: (context, value, child) => Icon(

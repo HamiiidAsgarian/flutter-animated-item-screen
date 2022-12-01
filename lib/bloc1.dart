@@ -2,8 +2,6 @@ import 'package:animateditems/shoe_class.dart';
 import 'package:animateditems/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'main.dart';
-
 abstract class CardEvent {}
 
 class ChangeCurrentPage extends CardEvent {
