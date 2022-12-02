@@ -2,6 +2,7 @@
 import 'dart:developer' as developer;
 
 import 'package:animateditems/basket_bloc.dart';
+import 'package:animateditems/favorite_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => BasketBloc(),
+        ),
+        BlocProvider(
+          create: (context) => FavoriteBloc(),
         ),
       ],
       child: const MaterialApp(home: SafeArea(child: HomeScreen())),
@@ -373,7 +377,7 @@ class ItemSection extends StatelessWidget {
                       children: [
                         const Text("Fav"),
                         const SizedBox(height: 5),
-                        BlocBuilder<BasketBloc, BasketState>(
+                        BlocBuilder<FavoriteBloc, FavoriteState>(
                           builder: (context, state) {
                             return MyRoundedButton(
                               onPress: (_) {
@@ -384,10 +388,10 @@ class ItemSection extends StatelessWidget {
                                 //     .contains(shoe));
                                 // print(state.favorite ?? [].contains(shoe));
 
-                                BlocProvider.of<BasketBloc>(context)
+                                BlocProvider.of<FavoriteBloc>(context)
                                     .add(AddFavorite(newFavorite: shoe));
                               },
-                              child: (BlocProvider.of<BasketBloc>(context)
+                              child: (BlocProvider.of<FavoriteBloc>(context)
                                       .favoriteShoes
                                       .contains(shoe))
                                   ? TweenAnimationBuilder(
@@ -399,12 +403,12 @@ class ItemSection extends StatelessWidget {
                                       builder: (context, value, child) => Icon(
                                         // key: UniqueKey(),
                                         Icons.favorite_border_outlined,
-                                        color:
-                                            BlocProvider.of<BasketBloc>(context)
-                                                    .favoriteShoes
-                                                    .contains(shoe)
-                                                ? Colors.red
-                                                : null,
+                                        color: BlocProvider.of<FavoriteBloc>(
+                                                    context)
+                                                .favoriteShoes
+                                                .contains(shoe)
+                                            ? Colors.red
+                                            : null,
                                         size: value,
                                       ),
                                     )
@@ -412,7 +416,7 @@ class ItemSection extends StatelessWidget {
                                       key: UniqueKey(),
                                       Icons.favorite_border_outlined,
                                       color:
-                                          BlocProvider.of<BasketBloc>(context)
+                                          BlocProvider.of<FavoriteBloc>(context)
                                                   .favoriteShoes
                                                   .contains(shoe)
                                               ? Colors.red
