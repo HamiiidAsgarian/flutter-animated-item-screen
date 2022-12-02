@@ -150,7 +150,7 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
               children: [
                 const Text("Add to basket"),
                 Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
                     width: 60,
                     height: 100,
                     decoration: BoxDecoration(
@@ -159,10 +159,11 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
                           end: Alignment.bottomCenter,
                           stops: [0.5, 0.9],
                           colors: [
-                            Color.fromARGB(255, 0, 0, 0),
+                            Color.fromARGB(123, 0, 0, 0),
                             Color.fromARGB(0, 0, 0, 0),
                           ],
                         ),
+                        border: Border.all(width: 5),
                         borderRadius: BorderRadius.circular(30)),
                     child: Stack(children: [
                       // const RiveAnimation.asset("assets/animations/packing.riv"),
@@ -175,11 +176,28 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
                       GestureDetector(
                         onVerticalDragStart: (details) {
                           swipeStartValue = details.localPosition.dy / 20;
-                          // details.localPosition;
-                          print(swipeStartValue);
+                        },
+                        onVerticalDragEnd: (details) {
+                          swipeReturnAnimCNTR.reset();
+
+                          if (swipeUpdateValue > 0) {
+                            _controller.isActive = true;
+                            BlocProvider.of<BasketBloc>(context).add(
+                                AddToShoppingBasket(
+                                    newShoppingShoe: widget.shoe));
+                          }
+                          returnToPosition =
+                              Tween(begin: swipeUpdateValue, end: -1).animate(
+                                  CurvedAnimation(
+                                      parent: swipeReturnAnimCNTR,
+                                      curve: Curves.linear));
+
+                          swipeReturnAnimCNTR.forward();
+                          swipeUpdateValue = -1;
+
+                          // }
                         },
                         onVerticalDragUpdate: (details) {
-                          swipeReturnAnimCNTR.reset();
                           setState(() {
                             swipeUpdateValue =
                                 (((details.localPosition.dy / 20) -
@@ -187,21 +205,8 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
                                         1)
                                     .clamp(-1, 1);
 
-                            // if (swipeUpdateValue > .5) {
-
-                            _controller.isActive = true;
-                            returnToPosition =
-                                Tween(begin: swipeUpdateValue, end: -1).animate(
-                                    CurvedAnimation(
-                                        parent: swipeReturnAnimCNTR,
-                                        curve: Curves.linear));
-
-                            swipeReturnAnimCNTR.forward();
-                            swipeUpdateValue = -1;
                             // }
                           });
-                          print(swipeUpdateValue);
-                          // print(swipeUpdateValue);
                         },
                         child: AnimatedBuilder(
                           animation: swipeReturnAnimCNTR,
@@ -213,6 +218,7 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
                                         ? returnToPosition.value
                                         : swipeUpdateValue),
                                 child: const CircleAvatar(
+                                  // radius: 30,
                                   backgroundColor:
                                       Color.fromARGB(255, 56, 56, 56),
                                   child: Icon(
@@ -385,13 +391,13 @@ class ItemSection extends StatelessWidget {
                                       .favoriteShoes
                                       .contains(shoe))
                                   ? TweenAnimationBuilder(
-                                      key: UniqueKey(),
+                                      // key: UniqueKey(),
                                       duration:
                                           const Duration(milliseconds: 600),
                                       tween: Tween(begin: 20.0, end: 30.0),
                                       curve: Curves.easeOutBack,
                                       builder: (context, value, child) => Icon(
-                                        key: UniqueKey(),
+                                        // key: UniqueKey(),
                                         Icons.favorite_border_outlined,
                                         color:
                                             BlocProvider.of<BasketBloc>(context)
@@ -543,7 +549,12 @@ class AppBarSection extends StatelessWidget {
                   radius: 10,
                   child: Padding(
                     padding: const EdgeInsets.all(3),
-                    child: FittedBox(child: Text("$cardItemsNumber")),
+                    child:
+                        FittedBox(child: BlocBuilder<BasketBloc, BasketState>(
+                      builder: (context, state) {
+                        return Text("${state.shoppingBasket!.length}");
+                      },
+                    )),
                   ),
                 )
               ],
