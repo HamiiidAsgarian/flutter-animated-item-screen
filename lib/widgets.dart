@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:animateditems/shoe_class.dart';
 import 'package:flutter/material.dart';
 
 class MyRoundedButton extends StatelessWidget {
@@ -205,3 +206,60 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
 }
 
 enum CdragDirection { left, right, na }
+
+class MyItemCard extends StatelessWidget {
+  const MyItemCard({required this.selectedShoe, super.key});
+  final SelectedShoe selectedShoe;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      width: 150,
+      height: 200,
+      decoration: BoxDecoration(
+          color: Color(0xFFf4f9fc), borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        children: [
+          Text(
+            "${selectedShoe.shoe.title}",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 17),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                  child: Row(children: [
+                const Text("Color "),
+                CircleAvatar(
+                  radius: 5,
+                  backgroundColor: selectedShoe.selectedColor,
+                ),
+              ])),
+              Container(
+                  child: Row(children: [
+                const Text("Size "),
+                Text("${selectedShoe.selectedSize}",
+                    style: const TextStyle(fontSize: 17)),
+              ])),
+            ],
+          ),
+          Expanded(
+            child: Image.asset(selectedShoe.shoe.imageUrl.toString()),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("\$${selectedShoe.shoe.price}",
+                  style: const TextStyle(fontSize: 17)),
+              MyRoundedButton(child: const Icon(Icons.close), onPress: (e) {})
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}

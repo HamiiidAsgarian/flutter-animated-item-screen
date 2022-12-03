@@ -33,7 +33,9 @@ class MyApp extends StatelessWidget {
           create: (context) => FavoriteBloc(),
         ),
       ],
-      child: const MaterialApp(home: SafeArea(child: HomeScreen())),
+      child: const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: SafeArea(child: HomeScreen())),
     );
   }
 }
@@ -44,34 +46,135 @@ class MyApp extends StatelessWidget {
 //     );
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     CardState blocState = BlocProvider.of<CardBloc>(context).state;
     var shoes = blocState.shoesMap ?? [];
 
+    // Color? selectedColor;
+    // int? selectedSize;
+
+    // ValueNotifier<int> a = ValueNotifier(0);
     developer.log("0-MainScreenBuilt");
 
     return Scaffold(
+      endDrawer: BlocBuilder<BasketBloc, BasketState>(
+        builder: (context, state) {
+          return Drawer(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: BlocBuilder<BasketBloc, BasketState>(
+                builder: (context, state) {
+                  List<Widget> a =
+                      state.shoppingBasket!.map((SelectedShoe element) {
+                    return Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: MyItemCard(selectedShoe: element));
+                  }).toList();
+
+                  return Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          color: Color.fromARGB(255, 83, 83, 83),
+                          height: 50,
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: IconButton(
+                                    onPressed: () {
+                                      Scaffold.of(context).closeEndDrawer();
+                                    },
+                                    icon: const Icon(Icons.close)),
+                              ),
+                              Align(
+                                  alignment: Alignment.center,
+                                  child: Text("Shopping Bag")),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView(
+                            children: [...a],
+                          ),
+                        ),
+                        Container(
+                          color: Color.fromARGB(255, 83, 83, 83),
+                          height: 50,
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: IconButton(
+                                    onPressed: () {
+                                      Scaffold.of(context).closeEndDrawer();
+                                    },
+                                    icon: const Icon(Icons.close)),
+                              ),
+                              Align(
+                                  alignment: Alignment.center,
+                                  child: Text("Shopping Bag")),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
       body: Container(
         color: Colors.blueGrey[800],
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
         child: BlocBuilder<CardBloc, CardState>(
           builder: (context, state) {
+            BlocProvider.of<BasketBloc>(context).add(
+                ItemChanged(newShoppingShoe: shoes[state.currentPage ?? 0]));
+
             // state.
             return Column(
               children: [
+                // MyItemCard(
+                //     selectedShoe: SelectedShoe(
+                //         shoe: shoes[state.currentPage ?? 0],
+                //         selectedColor: Colors.green,
+                //         selectedSize: 21)),
                 AppBarSection(
                   shoe: shoes[state.currentPage ?? 0],
                   cardItemsNumber: 0,
                 ),
                 TitleSection(shoe: shoes[state.currentPage ?? 0]),
                 ItemSection(
+                  onSelectColor: (index) {
+                    BlocProvider.of<BasketBloc>(context).add(SelectColor(
+                        color: shoes[state.currentPage ?? 0].colors![index]));
+                    // print(BlocProvider.of<BasketBloc>(context).selectedColor);
+                  },
+                  onSelectSize: (index) {
+                    BlocProvider.of<BasketBloc>(context).add(SelectSize(
+                        size: shoes[state.currentPage ?? 0].sizes![index]));
+                    // setState(() {});
+                  },
                   lastDragDirection:
                       state.lastDragDirection ?? CdragDirection.na,
                   currentPage: state.currentPage ?? 0,
                   shoe: shoes[state.currentPage ?? 0],
                 ),
-                AddToBasketSection(shoe: shoes[state.currentPage ?? 0])
+                AddToBasketSection(
+                    shoe: shoes[state.currentPage ?? 0],
+                    onAddToBasket: () {
+                      BlocProvider.of<BasketBloc>(context)
+                          .add(AddToShoppingBasket(
+                        newShoppingShoe: shoes[state.currentPage ?? 0],
+                      ));
+                      // }
+                    })
               ],
             );
           },
@@ -82,8 +185,11 @@ class HomeScreen extends StatelessWidget {
 }
 
 class AddToBasketSection extends StatefulWidget {
-  const AddToBasketSection({Key? key, required this.shoe}) : super(key: key);
+  const AddToBasketSection(
+      {Key? key, required this.shoe, required this.onAddToBasket})
+      : super(key: key);
   final Shoe shoe;
+  final Function onAddToBasket;
 
   @override
   State<AddToBasketSection> createState() => _AddToBasketSectionState();
@@ -110,9 +216,9 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
       onStart: () => setState(() => _isPlaying = false),
     );
     swipeReturnAnimCNTR = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
+        duration: const Duration(milliseconds: 200), vsync: this);
     returnToPosition = Tween(begin: 0.0, end: 0.1).animate(CurvedAnimation(
-        parent: swipeReturnAnimCNTR, curve: Curves.easeOutBack));
+        parent: swipeReturnAnimCNTR, curve: Curves.easeInOutBack));
     super.initState();
   }
 
@@ -186,15 +292,13 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
 
                           if (swipeUpdateValue > 0) {
                             _controller.isActive = true;
-                            BlocProvider.of<BasketBloc>(context).add(
-                                AddToShoppingBasket(
-                                    newShoppingShoe: widget.shoe));
+                            widget.onAddToBasket();
                           }
                           returnToPosition =
                               Tween(begin: swipeUpdateValue, end: -1).animate(
                                   CurvedAnimation(
                                       parent: swipeReturnAnimCNTR,
-                                      curve: Curves.linear));
+                                      curve: Curves.easeOutBack));
 
                           swipeReturnAnimCNTR.forward();
                           swipeUpdateValue = -1;
@@ -249,9 +353,14 @@ class ItemSection extends StatelessWidget {
     required this.lastDragDirection,
     required this.currentPage,
     required this.shoe,
+    required this.onSelectSize,
+    required this.onSelectColor,
   }) : super(key: key);
   final CdragDirection lastDragDirection;
   final int currentPage;
+
+  final Function onSelectSize;
+  final Function onSelectColor;
 
   final Shoe shoe;
   // final Widget item;
@@ -266,6 +375,8 @@ class ItemSection extends StatelessWidget {
         onAnimationEnd: (CdragDirection direction) {
           BlocProvider.of<CardBloc>(context)
               .add(OnAnimationEnds(direction: direction));
+
+          // onItemChanged();
         },
         // child: Text(shoe.title ?? "NA"),
         child: Image.asset(
@@ -329,7 +440,11 @@ class ItemSection extends StatelessWidget {
                           builder: (context, value, child) =>
                               Transform.translate(
                             offset: Offset(value, 0),
-                            child: OptionBoxes(items: shoe.sizes ?? []),
+                            child: OptionBoxes(
+                                items: shoe.sizes ?? [],
+                                onPress: (index) {
+                                  onSelectSize(index);
+                                }),
                           ),
                         )
                       ],
@@ -443,7 +558,11 @@ class ItemSection extends StatelessWidget {
                           builder: (context, value, child) =>
                               Transform.translate(
                             offset: Offset(value, 0),
-                            child: OptionBoxes(items: shoe.colors ?? []),
+                            child: OptionBoxes(
+                                items: shoe.colors ?? [],
+                                onPress: (index) {
+                                  onSelectColor(index);
+                                }),
                           ),
                         ),
                         const SizedBox(height: 5),
@@ -515,7 +634,7 @@ class AppBarSection extends StatelessWidget {
   Widget build(BuildContext context) {
     developer.log("3-Logo sec build");
     return Container(
-        height: 50,
+        height: 50, //NOTE
         color: Colors.yellow,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -537,31 +656,66 @@ class AppBarSection extends StatelessWidget {
                             child: Image.asset(shoe.logoUrl ?? ""))),
                   );
                 }),
-            Stack(
-              children: [
-                MyRoundedButton(
-                    onPress: () {
-                      // BlocProvider.of<CardBloc>(context).add(
-                      //     AddToCardPressed(
-                      //         shoe: Shoe(id: Random().nextInt(100))));
-                      // print(
-                      //     BlocProvider.of<CardBloc>(context).shoesList);
-                    },
-                    child: const Icon(Icons.shopping_bag_outlined)),
-                CircleAvatar(
-                  backgroundColor: Colors.black,
-                  radius: 10,
-                  child: Padding(
-                    padding: const EdgeInsets.all(3),
-                    child:
-                        FittedBox(child: BlocBuilder<BasketBloc, BasketState>(
-                      builder: (context, state) {
-                        return Text("${state.shoppingBasket!.length}");
-                      },
-                    )),
+            Container(
+              // padding: EdgeInsets.only(left: 10),
+              width: 45, //NOTE
+              color: Colors.green,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: MyRoundedButton(
+                        onPress: (e) {
+                          Scaffold.of(context).openEndDrawer();
+                        },
+                        child: const Icon(Icons.shopping_bag_outlined)),
                   ),
-                )
-              ],
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: BlocBuilder<BasketBloc, BasketState>(
+                      // key: UniqueKey(),
+                      builder: (context, state) {
+                        return TweenAnimationBuilder(
+                            curve: Curves.easeInOutBack,
+                            key: UniqueKey(),
+                            tween: Tween(begin: 12.0, end: 8.0),
+                            duration: const Duration(milliseconds: 600),
+                            // curve: const Interval(0.0, 1.0, curve: Curves.easeOutQuad),
+                            builder: (context, value, child) => CircleAvatar(
+                                  backgroundColor: Colors.black,
+                                  radius: value,
+                                  child: Text(
+                                    "${state.shoppingBasket!.length}",
+                                    style: TextStyle(fontSize: value),
+                                  ),
+                                ));
+                      },
+                    ),
+                  ),
+
+                  // child: TweenAnimationBuilder(
+                  //   tween: Tween<double>(begin: 12.0, end: 8.0),
+                  //   duration: Duration(milliseconds: 600),
+                  //   builder:
+                  //       (BuildContext context, int value, Widget? child) {
+                  //     return CircleAvatar(
+                  //       key: key,
+                  //       backgroundColor: Colors.black,
+                  //       radius: value,
+                  //       child: Center(
+                  //           child: BlocBuilder<BasketBloc, BasketState>(
+                  //         builder: (context, state) {
+                  //           return Text(
+                  //             "${state.shoppingBasket!.length}",
+                  //             style: const TextStyle(fontSize: 9),
+                  //           );
+                  //         },
+                  //       )),
+                  //     );
+                  //   },
+                  // ),
+                ],
+              ),
             )
           ],
         ));
@@ -572,8 +726,9 @@ class OptionBoxes extends StatefulWidget {
   const OptionBoxes({
     Key? key,
     required this.items,
+    required this.onPress,
   }) : super(key: key);
-
+  final Function onPress;
   final List items;
   @override
   State<OptionBoxes> createState() => _OptionBoxesState();
@@ -581,6 +736,11 @@ class OptionBoxes extends StatefulWidget {
 
 class _OptionBoxesState extends State<OptionBoxes> {
   int? selectedboxID;
+  @override
+  void initState() {
+    widget.items.isNotEmpty ? selectedboxID = 0 : null;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -600,6 +760,8 @@ class _OptionBoxesState extends State<OptionBoxes> {
                 setState(() {
                   selectedboxID = index;
                 });
+
+                widget.onPress(index);
               }),
         ));
       } else {
@@ -613,6 +775,7 @@ class _OptionBoxesState extends State<OptionBoxes> {
                 setState(() {
                   selectedboxID = index;
                 });
+                widget.onPress(index);
               }),
         ));
       }

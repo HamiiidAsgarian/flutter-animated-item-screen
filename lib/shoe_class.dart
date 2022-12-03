@@ -61,6 +61,23 @@ class Shoe {
   }
 }
 
+class SelectedShoe extends Shoe {
+  final Color selectedColor;
+  final int selectedSize;
+  final Shoe shoe;
+
+  SelectedShoe(
+      {required this.selectedColor,
+      required this.selectedSize,
+      required this.shoe});
+
+  factory SelectedShoe.fromShoe(
+      Shoe shoe, Color selectedColor, int selectedSize) {
+    return SelectedShoe(
+        shoe: shoe, selectedColor: selectedColor, selectedSize: selectedSize);
+  }
+}
+
 List<Map<String, dynamic>> products = [
   {
     "id": 1,
