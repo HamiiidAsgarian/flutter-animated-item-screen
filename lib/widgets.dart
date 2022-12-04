@@ -2,6 +2,9 @@ import 'dart:math';
 
 import 'package:animateditems/shoe_class.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'basket_bloc.dart';
 
 class MyRoundedButton extends StatelessWidget {
   const MyRoundedButton({
@@ -11,10 +14,10 @@ class MyRoundedButton extends StatelessWidget {
     required this.onPress,
     this.index,
     this.isActive,
-    this.borderColor = Colors.blueGrey,
+    // this.borderColor = Colors.red,
     this.fillColor = const Color.fromARGB(0, 255, 255, 255),
   });
-  final Color? borderColor;
+  // final Color? borderColor;
   final Color? fillColor;
   final Widget child;
   final Function onPress;
@@ -24,6 +27,8 @@ class MyRoundedButton extends StatelessWidget {
   // bool isActive = false;
   @override
   Widget build(BuildContext context) {
+    // borderColor = Theme.of(context).shadowColor;
+
     return TweenAnimationBuilder(
       key: UniqueKey(),
       tween: Tween(begin: 1.5, end: 5.0),
@@ -36,7 +41,10 @@ class MyRoundedButton extends StatelessWidget {
             color: fillColor,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-                width: isActive ?? false ? value : 1.5, color: borderColor!)),
+                width: isActive ?? false ? value : 1.5,
+                color: isActive ?? false
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).shadowColor)),
         child: RawMaterialButton(
           child: child,
           onPressed: () {
@@ -208,9 +216,10 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
 enum CdragDirection { left, right, na }
 
 class MyItemCard extends StatelessWidget {
-  const MyItemCard({required this.selectedShoe, super.key});
+  const MyItemCard(
+      {required this.selectedShoe, required this.index, super.key});
   final SelectedShoe selectedShoe;
-
+  final int index;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -218,11 +227,12 @@ class MyItemCard extends StatelessWidget {
       width: 150,
       height: 200,
       decoration: BoxDecoration(
-          color: Color(0xFFf4f9fc), borderRadius: BorderRadius.circular(10)),
+          // color: Color.fromARGB(255, 0, 157, 255),
+          borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           Text(
-            "${selectedShoe.shoe.title}",
+            "$index ${selectedShoe.shoe.title}",
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 17),
@@ -255,11 +265,184 @@ class MyItemCard extends StatelessWidget {
             children: [
               Text("\$${selectedShoe.shoe.price}",
                   style: const TextStyle(fontSize: 17)),
-              MyRoundedButton(child: const Icon(Icons.close), onPress: (e) {})
+              MyRoundedButton(
+                  child: const Icon(Icons.close),
+                  onPress: (e) {
+                    BlocProvider.of<BasketBloc>(context).add(
+                        DeleteFromShoppingBasket(
+                            selectedShoe: selectedShoe,
+                            selectedShoeListIndex: index));
+                  })
             ],
           )
         ],
       ),
     );
+  }
+}
+
+class MyDrawer extends StatelessWidget {
+  const MyDrawer({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BasketBloc, BasketState>(
+      builder: (context, state) {
+        print("object");
+        return Drawer(
+          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: BlocBuilder<BasketBloc, BasketState>(
+              builder: (context, state) {
+                // List<Widget> a =
+                //     state.shoppingBasket!.map((SelectedShoe element) {
+                //   return Padding(
+                //       padding: const EdgeInsets.only(bottom: 15),
+                //       child: MyItemCard(selectedShoe: element));
+                // }).toList();
+
+                List<Widget> a = state.shoppingBasket!
+                    .asMap()
+                    .map((i, element) => MapEntry(
+                        i,
+                        Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: MyItemCard(
+                                selectedShoe: element, index: i)))) //NOTE
+                    .values
+                    .toList();
+
+                return Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        color: const Color.fromARGB(255, 83, 83, 83),
+                        height: 50,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Scaffold.of(context).closeEndDrawer();
+                                  },
+                                  icon: const Icon(Icons.close)),
+                            ),
+                            const Align(
+                                alignment: Alignment.center,
+                                child: Text("Shopping Bag")),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [...a],
+                        ),
+                      ),
+                      Container(
+                        color: Color.fromARGB(255, 138, 0, 0),
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Total Costs: "),
+                            ),
+                            Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                    "${BlocProvider.of<BasketBloc>(context).totalItemsPrice}\$")),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class OptionBoxes extends StatefulWidget {
+  const OptionBoxes({
+    Key? key,
+    required this.items,
+    required this.onPress,
+  }) : super(key: key);
+  final Function onPress;
+  final List items;
+  @override
+  State<OptionBoxes> createState() => _OptionBoxesState();
+}
+
+class _OptionBoxesState extends State<OptionBoxes> {
+  int? selectedboxID;
+  @override
+  void initState() {
+    widget.items.isNotEmpty ? selectedboxID = 0 : null;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> children = [];
+    for (int i = 0; i < widget.items.length; i++) {
+      if (widget.items is List<Color>) {
+        children.add(Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: MyRoundedButton(
+              isActive: selectedboxID == i ? true : false,
+              index: i,
+              child: Container(
+                width: 15,
+                height: 15,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: widget.items[i]),
+              ),
+              onPress: (int index) {
+                setState(() {
+                  selectedboxID = index;
+                });
+
+                widget.onPress(index);
+              }),
+        ));
+      } else {
+        children.add(Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: MyRoundedButton(
+              isActive: selectedboxID == i ? true : false,
+              index: i,
+              child: Text("${widget.items[i]}",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.w500, fontSize: 18)),
+              onPress: (int index) {
+                setState(() {
+                  selectedboxID = index;
+                });
+                widget.onPress(index);
+              }),
+        ));
+      }
+    }
+    return Column(children: children
+        // .map((e) => MyRoundedButton(onPress: (int buttonIndex) {
+        //       setState(() {
+        //         selectedboxID = buttonIndex;
+        //       });
+        //     }))
+        // .toList()
+        );
   }
 }

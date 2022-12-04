@@ -21,6 +21,16 @@ class AddToShoppingBasket extends BasketEvent {
   AddToShoppingBasket({required this.newShoppingShoe});
 }
 
+class DeleteFromShoppingBasket extends BasketEvent {
+  Shoe selectedShoe;
+  int selectedShoeListIndex;
+
+  // Color color;
+  // int size;
+  DeleteFromShoppingBasket(
+      {required this.selectedShoe, required this.selectedShoeListIndex});
+}
+
 class SelectSize extends BasketEvent {
   // Shoe newShoppingShoe;
   // Color color;
@@ -73,10 +83,13 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
   int? selectedSize;
   Color? selectedColor;
   Shoe? currentShoe;
+  double totalItemsPrice = 0.0;
 
   BasketBloc() : super(BasketInit()) {
     // on<AddFavorite>(onAddFavorites);
     on<AddToShoppingBasket>(onAddShoppingBasket);
+    on<DeleteFromShoppingBasket>(onDeleteFromBasket);
+
     on<SelectSize>(onAddSize);
     on<SelectColor>(onAddColor);
     on<ItemChanged>(onItemChange);
@@ -86,13 +99,13 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
   }
   void onAddSize(SelectSize event, Emitter<BasketState> emit) {
     selectedSize = event.size;
-    emit(BasketUpdate(shoppingBasket: state.shoppingBasket!));
+    // emit(BasketUpdate(shoppingBasket: state.shoppingBasket!));
     print(selectedSize);
   }
 
   void onAddColor(SelectColor event, Emitter<BasketState> emit) {
     selectedColor = event.color;
-    emit(BasketUpdate(shoppingBasket: state.shoppingBasket!));
+    // emit(BasketUpdate(shoppingBasket: state.shoppingBasket!));
     print(selectedColor);
   }
 
@@ -105,6 +118,7 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     //     selectedSize: event.size,
     //     shoe: event.newShoppingShoe);
     // shoppingBasket.add(newSelection);
+
     emit(BasketUpdate(shoppingBasket: state.shoppingBasket!));
   }
 
@@ -126,6 +140,29 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
         shoe: event.newShoppingShoe);
     shoppingBasket.add(newSelection);
     emit(BasketUpdate(shoppingBasket: shoppingBasket));
+
+    for (var element in shoppingBasket) {
+      totalItemsPrice = (element.shoe.price! + totalItemsPrice);
+    }
+    print(totalItemsPrice);
+
+    (state.shoppingBasket!.forEach((element) =>
+        print("${element.selectedColor} ${element.selectedSize}")));
+  }
+
+  void onDeleteFromBasket(
+      DeleteFromShoppingBasket event, Emitter<BasketState> emit) {
+    shoppingBasket.removeAt(event.selectedShoeListIndex);
+    // for (var element in shoppingBasket) {
+    totalItemsPrice = 0; //NOTE DONO WHY THIS WORKS YET
+    // }
+    // shoppingBasket.add(newSelection);
+    emit(BasketUpdate(shoppingBasket: shoppingBasket));
+
+    for (var element in shoppingBasket) {
+      totalItemsPrice = (element.shoe.price! + totalItemsPrice);
+    }
+    print(totalItemsPrice);
 
     (state.shoppingBasket!.forEach((element) =>
         print("${element.selectedColor} ${element.selectedSize}")));
