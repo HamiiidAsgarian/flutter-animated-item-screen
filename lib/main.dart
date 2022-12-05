@@ -72,6 +72,21 @@ class HomeScreen extends StatelessWidget {
             // state.
             return Column(
               children: [
+                // Center(
+                //   child: ColorFiltered(
+                //     colorFilter: ColorFilter.mode(Colors.red, BlendMode.hue),
+                //     child: Container(
+                //       margin: const EdgeInsets.all(50),
+                //       width: 20,
+                //       height: 20,
+                //       // color: Colors.purple,
+                //       child: Opacity(
+                //         opacity: (1),
+                //         child: FlutterLogo(),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 AppBarSection(
                   shoe: shoes[state.currentPage ?? 0],
                   cardItemsNumber: 0,

@@ -31,9 +31,9 @@ class MyRoundedButton extends StatelessWidget {
 
     return TweenAnimationBuilder(
       key: UniqueKey(),
-      tween: Tween(begin: 1.5, end: 5.0),
+      tween: Tween(begin: 1.5, end: 3.0),
       duration: const Duration(milliseconds: 300),
-      curve: Curves.bounceOut,
+      curve: Curves.easeOutBack,
       builder: (context, value, _) => Container(
         width: 40,
         height: 40,
@@ -53,6 +53,67 @@ class MyRoundedButton extends StatelessWidget {
             // });
             onPress(index ?? 0);
           },
+        ),
+      ),
+    );
+  }
+}
+
+class MyRoundedButtonFill extends StatelessWidget {
+  const MyRoundedButtonFill({
+    super.key,
+    required this.child,
+    // this.onPressed,
+    required this.onPress,
+    this.index,
+    this.isActive,
+    // this.borderColor = Colors.red,
+    this.fillColor = const Color.fromARGB(0, 255, 255, 255),
+  });
+  // final Color? borderColor;
+  final Color? fillColor;
+  final Widget child;
+  final Function onPress;
+  final int? index;
+  final bool? isActive;
+
+  // bool isActive = false;
+  @override
+  Widget build(BuildContext context) {
+    // borderColor = Theme.of(context).shadowColor;
+
+    return TweenAnimationBuilder(
+      key: UniqueKey(),
+      tween: Tween(begin: 1.0, end: 1.15),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+      builder: (context, value, _) => Transform.scale(
+        scale: isActive! ? value : 1.0,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+              color: isActive ?? false
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                  width: isActive ?? false ? 1.5 : 0,
+                  color: isActive ?? false
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).shadowColor)),
+          child: RawMaterialButton(
+            child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                    isActive! ? Colors.white : Colors.black, BlendMode.srcATop),
+                child: child),
+            onPressed: () {
+              // setState(() {
+              //   isActive = !isActive;
+              // });
+              onPress(index ?? 0);
+            },
+          ),
         ),
       ),
     );
@@ -223,26 +284,40 @@ class MyItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(20),
       width: 150,
       height: 200,
       decoration: BoxDecoration(
-          // color: Color.fromARGB(255, 0, 157, 255),
+          border: Border.all(width: 2),
+          color: Theme.of(context).shadowColor,
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
-          Text(
-            "$index ${selectedShoe.shoe.title}",
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 17),
+          Row(
+            children: [
+              Text(
+                "$index- ${selectedShoe.shoe.title}",
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontSize: 20),
+              ),
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                   child: Row(children: [
-                const Text("Color "),
+                Text(
+                  "Color  ",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontSize: 13),
+                ),
                 CircleAvatar(
                   radius: 5,
                   backgroundColor: selectedShoe.selectedColor,
@@ -250,14 +325,28 @@ class MyItemCard extends StatelessWidget {
               ])),
               Container(
                   child: Row(children: [
-                const Text("Size "),
-                Text("${selectedShoe.selectedSize}",
-                    style: const TextStyle(fontSize: 17)),
+                Text(
+                  "Size ",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontSize: 13),
+                ),
+                Text(
+                  "${selectedShoe.selectedSize}",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontSize: 15),
+                ),
               ])),
             ],
           ),
           Expanded(
-            child: Image.asset(selectedShoe.shoe.imageUrl.toString()),
+            child: Image.asset(
+              selectedShoe.shoe.imageUrl.toString(),
+              fit: BoxFit.cover,
+            ),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -294,7 +383,7 @@ class MyDrawer extends StatelessWidget {
         return Drawer(
           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           child: Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(0),
             child: BlocBuilder<BasketBloc, BasketState>(
               builder: (context, state) {
                 // List<Widget> a =
@@ -319,7 +408,7 @@ class MyDrawer extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        color: const Color.fromARGB(255, 83, 83, 83),
+                        color: Theme.of(context).primaryColor,
                         height: 50,
                         child: Stack(
                           children: [
@@ -329,33 +418,109 @@ class MyDrawer extends StatelessWidget {
                                   onPressed: () {
                                     Scaffold.of(context).closeEndDrawer();
                                   },
-                                  icon: const Icon(Icons.close)),
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Theme.of(context).backgroundColor,
+                                  )),
                             ),
-                            const Align(
+                            Align(
                                 alignment: Alignment.center,
-                                child: Text("Shopping Bag")),
+                                child: Text("Shopping Bag",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .backgroundColor))),
                           ],
                         ),
                       ),
                       Expanded(
-                        child: ListView(
-                          children: [...a],
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, right: 25, top: 10),
+                          child: ListView(
+                            children: [...a],
+                          ),
                         ),
                       ),
                       Container(
-                        color: Color.fromARGB(255, 138, 0, 0),
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        color: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 20),
+                        // height: 50,
+                        child: Column(
                           children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Total Costs: "),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Total Costs: ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 20,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                                Text(
+                                    "${BlocProvider.of<BasketBloc>(context).totalItemsPrice}\$",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 25,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                              ],
                             ),
-                            Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                    "${BlocProvider.of<BasketBloc>(context).totalItemsPrice}\$")),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Additional Tax: ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 13,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                                Text(
+                                    "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice / 13.75).toStringAsFixed(2))}\$",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 15,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                              ],
+                            ),
+                            const SizedBox(height: 25),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.redAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.wallet,
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                  Text(" Go to the payment",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              fontSize: 20,
+                                              color: Theme.of(context)
+                                                  .backgroundColor))
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -419,14 +584,16 @@ class _OptionBoxesState extends State<OptionBoxes> {
       } else {
         children.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: MyRoundedButton(
+          child: MyRoundedButtonFill(
               isActive: selectedboxID == i ? true : false,
               index: i,
               child: Text("${widget.items[i]}",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontWeight: FontWeight.w500, fontSize: 18)),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      color: selectedboxID == i
+                          ? const Color.fromARGB(255, 255, 255, 255)
+                          : const Color.fromARGB(255, 0, 0, 0))),
               onPress: (int index) {
                 setState(() {
                   selectedboxID = index;

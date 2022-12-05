@@ -32,6 +32,7 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
   late rive.RiveAnimationController _controller;
   late AnimationController swipeReturnAnimCNTR;
   late Animation returnToPosition;
+  late Animation returnToScale;
 
   @override
   void initState() {
@@ -46,13 +47,23 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
         duration: const Duration(milliseconds: 200), vsync: this);
     returnToPosition = Tween(begin: 0.0, end: 0.1).animate(CurvedAnimation(
         parent: swipeReturnAnimCNTR, curve: Curves.easeInOutBack));
+    returnToScale = Tween(begin: 1.0, end: 1.0).animate(CurvedAnimation(
+        parent: swipeReturnAnimCNTR, curve: Curves.easeInOutBack));
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    swipeReturnAnimCNTR.dispose();
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: Container(
+        child: SizedBox(
       height: 300,
       // color: const Color.fromARGB(255, 255, 186, 209),
       child: Stack(
@@ -129,6 +140,11 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
                                       parent: swipeReturnAnimCNTR,
                                       curve: Curves.easeOutBack));
 
+                          returnToScale = Tween(begin: 1.3, end: 1.0).animate(
+                              CurvedAnimation(
+                                  parent: swipeReturnAnimCNTR,
+                                  curve: Curves.easeInOutBack));
+
                           swipeReturnAnimCNTR.forward();
                           swipeUpdateValue = -1;
 
@@ -154,17 +170,20 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
                                     swipeReturnAnimCNTR.isAnimating
                                         ? returnToPosition.value
                                         : swipeUpdateValue),
-                                child: CircleAvatar(
-                                  // radius: 30,
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.primary,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 4),
-                                    child: Icon(
-                                      Icons.shopping_bag_outlined,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
+                                child: Transform.scale(
+                                  scaleY: returnToScale.value,
+                                  child: CircleAvatar(
+                                    // radius: 30,
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
                                     ),
                                   ),
                                 ));
@@ -234,7 +253,7 @@ class ItemSection extends StatelessWidget {
               quarterTurns: 1,
               child: TweenAnimationBuilder(
                 key: UniqueKey(),
-                tween: Tween(begin: 0.1, end: 1.2),
+                tween: Tween(begin: 0.2, end: 1.2),
                 duration: const Duration(seconds: 2),
                 curve: const Interval(0.0, 1.0, curve: Curves.easeOutQuad),
                 builder: (context, value, child) => Transform.scale(
@@ -245,8 +264,11 @@ class ItemSection extends StatelessWidget {
                     height: double.infinity,
                     // color: Colors.purple,
                     child: Opacity(
-                        opacity: (value / 10),
-                        child: Image.asset(shoe.logoUrl ?? "")),
+                        opacity: (value - .2),
+                        child: Image.asset(
+                          shoe.logoUrl ?? "",
+                          color: Theme.of(context).shadowColor,
+                        )),
                   ),
                 ),
               ),
@@ -267,6 +289,9 @@ class ItemSection extends StatelessWidget {
                       children: [
                         Text("Size",
                             style: Theme.of(context).textTheme.bodySmall),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         TweenAnimationBuilder(
                           key: UniqueKey(),
                           duration: const Duration(milliseconds: 600),
@@ -325,7 +350,7 @@ class ItemSection extends StatelessWidget {
                       children: [
                         Text("Fav",
                             style: Theme.of(context).textTheme.bodySmall),
-                        const SizedBox(height: 5),
+                        const SizedBox(height: 10),
                         BlocBuilder<FavoriteBloc, FavoriteState>(
                           builder: (context, state) {
                             return MyRoundedButton(
@@ -466,7 +491,7 @@ class AppBarSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     developer.log("3-Logo sec build");
-    return Container(
+    return SizedBox(
         height: 50, //NOTE
         // color: Colors.yellow,
         child: Row(
@@ -485,11 +510,14 @@ class AppBarSection extends StatelessWidget {
                     child: Container(
                         // color: Colors.red,
                         child: Opacity(
-                            opacity: .1,
-                            child: Image.asset(shoe.logoUrl ?? ""))),
+                            opacity: 1,
+                            child: Image.asset(
+                              shoe.logoUrl ?? "",
+                              color: Theme.of(context).shadowColor,
+                            ))),
                   );
                 }),
-            Container(
+            SizedBox(
               // padding: EdgeInsets.only(left: 10),
               width: 45, //NOTE
               // color: Colors.green,

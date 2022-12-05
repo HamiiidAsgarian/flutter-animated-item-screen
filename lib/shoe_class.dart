@@ -87,7 +87,7 @@ List<Map<String, dynamic>> products = [
     "colors": ["red", "green", "blue"],
     "price": 1200.0,
     "brandName": "Nike",
-    "imageUrl": "assets/images/shoes/n1.png",
+    "imageUrl": "assets/images/shoes/n3.png",
     "LogoUrl": "assets/images/logos/nikeLogo.png"
   },
   {
