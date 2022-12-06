@@ -567,3 +567,215 @@ class AppBarSection extends StatelessWidget {
         ));
   }
 }
+
+class MyDrawer extends StatelessWidget {
+  MyDrawer({
+    Key? key,
+  }) : super(key: key);
+
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BasketBloc, BasketState>(
+      builder: (context, state) {
+        return Drawer(
+          // width: 200,
+          backgroundColor: Theme.of(context).backgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.all(0),
+            child: BlocBuilder<BasketBloc, BasketState>(
+              builder: (context, state) {
+                // List<Widget> a =
+                //     state.shoppingBasket!.map((SelectedShoe element) {
+                //   return Padding(
+                //       padding: const EdgeInsets.only(bottom: 15),
+                //       child: MyItemCard(selectedShoe: element));
+                // }).toList();
+
+                // List<Widget> a = state.shoppingBasket!
+                //     .asMap()
+                //     .map((i, element) => MapEntry(
+                //           i,
+                //           Padding(
+                //               key: Key(
+                //                   element.shoe.title.toString() + i.toString()),
+                //               padding: const EdgeInsets.only(bottom: 0),
+                //               child:
+                //                   MyItemCard(selectedShoe: element, index: i)),
+                //         )) //NOTE
+                //     .values
+                //     .toList();
+
+                return Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        color: Theme.of(context).primaryColor,
+                        height: 50,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Scaffold.of(context).closeEndDrawer();
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Theme.of(context).backgroundColor,
+                                  )),
+                            ),
+                            Align(
+                                alignment: Alignment.center,
+                                child: Text("Shopping Bag",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .backgroundColor))),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, right: 25, top: 10),
+                          child: AnimatedList(
+                            key: _listKey,
+                            initialItemCount: state.shoppingBasket!.length,
+                            itemBuilder: (context, index, animation) {
+                              return Padding(
+                                  // key: Key(
+                                  //     element.shoe.title.toString() + i.toString()),
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: MyItemCard(
+                                    // key: ValueKey(state.shoppingBasket![index]),
+                                    selectedShoe: state.shoppingBasket![index],
+                                    index: index,
+                                    onPressDelete: (e) async {
+                                      SelectedShoe thisShoe =
+                                          state.shoppingBasket![index];
+
+                                      BlocProvider.of<BasketBloc>(context).add(
+                                          DeleteFromShoppingBasket(
+                                              selectedShoe:
+                                                  state.shoppingBasket![index],
+                                              selectedShoeListIndex: index));
+
+                                      _listKey.currentState!.removeItem(index,
+                                          (context, animation) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: ScaleTransition(
+                                            scale: animation,
+                                            child: MyItemCard(
+                                                onPressDelete: (e) {},
+                                                selectedShoe: thisShoe,
+                                                index: index),
+                                          ),
+                                        );
+                                      },
+                                          duration: const Duration(
+                                              milliseconds: 300));
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 300));
+                                    },
+                                  ));
+                            },
+                            // children: [...a],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        color: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 20),
+                        // height: 50,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Total Costs: ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 20,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                                Text(
+                                    "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice).toStringAsFixed(2))}\$",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 25,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Additional Tax: ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 13,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                                Text(
+                                    "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice / 13.75).toStringAsFixed(2))}\$",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            fontSize: 15,
+                                            color: Theme.of(context)
+                                                .backgroundColor)),
+                              ],
+                            ),
+                            const SizedBox(height: 25),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.redAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.wallet,
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                  Text(" Go to the payment",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              fontSize: 20,
+                                              color: Theme.of(context)
+                                                  .backgroundColor))
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

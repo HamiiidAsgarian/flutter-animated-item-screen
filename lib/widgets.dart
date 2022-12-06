@@ -278,260 +278,138 @@ enum CdragDirection { left, right, na }
 
 class MyItemCard extends StatelessWidget {
   const MyItemCard(
-      {required this.selectedShoe, required this.index, super.key});
+      {required this.selectedShoe,
+      required this.index,
+      super.key,
+      required this.onPressDelete});
   final SelectedShoe selectedShoe;
   final int index;
+  final Function onPressDelete;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      width: 150,
-      height: 200,
-      decoration: BoxDecoration(
-          border: Border.all(width: 2),
-          color: Theme.of(context).shadowColor,
-          borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                "$index- ${selectedShoe.shoe.title}",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .copyWith(fontSize: 20),
+    return Transform.scale(
+      scale: 1,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        width: 150,
+        height: 200,
+        decoration: BoxDecoration(
+            border: Border.all(width: 2),
+            color: Theme.of(context).shadowColor.withOpacity(.5),
+            borderRadius: BorderRadius.circular(10)),
+        child: Stack(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              // color: Colors.red,
+              child: Image.asset(
+                selectedShoe.shoe.imageUrl.toString(),
+                fit: BoxFit.cover,
               ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                  child: Row(children: [
-                Text(
-                  "Color  ",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontSize: 13),
-                ),
-                CircleAvatar(
-                  radius: 5,
-                  backgroundColor: selectedShoe.selectedColor,
-                ),
-              ])),
-              Container(
-                  child: Row(children: [
-                Text(
-                  "Size ",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontSize: 13),
-                ),
-                Text(
-                  "${selectedShoe.selectedSize}",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontSize: 15),
-                ),
-              ])),
-            ],
-          ),
-          Expanded(
-            child: Image.asset(
-              selectedShoe.shoe.imageUrl.toString(),
-              fit: BoxFit.cover,
             ),
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("\$${selectedShoe.shoe.price}",
-                  style: const TextStyle(fontSize: 17)),
-              MyRoundedButton(
-                  child: const Icon(Icons.close),
-                  onPress: (e) {
-                    BlocProvider.of<BasketBloc>(context).add(
-                        DeleteFromShoppingBasket(
-                            selectedShoe: selectedShoe,
-                            selectedShoeListIndex: index));
-                  })
-            ],
-          )
-        ],
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "${index}- ${selectedShoe.shoe.title}",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(fontSize: 20),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        child: Row(children: [
+                      Text(
+                        "Color  ",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontSize: 13),
+                      ),
+                      CircleAvatar(
+                        radius: 5,
+                        backgroundColor: selectedShoe.selectedColor,
+                      ),
+                    ])),
+                    Container(
+                        child: Row(children: [
+                      Text(
+                        "Size ",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontSize: 13),
+                      ),
+                      Text(
+                        "${selectedShoe.selectedSize}",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontSize: 15),
+                      ),
+                    ])),
+                  ],
+                ),
+                const Expanded(
+                  child: SizedBox(),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Price",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 13),
+                        ),
+                        Text(
+                          "\$${selectedShoe.shoe.price}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    MyRoundedButton(
+                        child: Icon(Icons.close,
+                            color: Theme.of(context).primaryColor),
+                        onPress: (e) {
+                          onPressDelete(e);
+                          // anim1 = Tween(begin: 1.0, end: 0.0).animate(
+                          //     CurvedAnimation(
+                          //         parent: cntrl1, curve: Curves.easeIn));
+                          // cntrl1.reverse().then((value) {
+
+                          // BlocProvider.of<BasketBloc>(context).add(
+                          //     DeleteFromShoppingBasket(
+                          //         selectedShoe: selectedShoe,
+                          //         selectedShoeListIndex: index));
+
+                          // });
+                        })
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
-    );
-  }
-}
-
-class MyDrawer extends StatelessWidget {
-  const MyDrawer({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<BasketBloc, BasketState>(
-      builder: (context, state) {
-        print("object");
-        return Drawer(
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-          child: Padding(
-            padding: const EdgeInsets.all(0),
-            child: BlocBuilder<BasketBloc, BasketState>(
-              builder: (context, state) {
-                // List<Widget> a =
-                //     state.shoppingBasket!.map((SelectedShoe element) {
-                //   return Padding(
-                //       padding: const EdgeInsets.only(bottom: 15),
-                //       child: MyItemCard(selectedShoe: element));
-                // }).toList();
-
-                List<Widget> a = state.shoppingBasket!
-                    .asMap()
-                    .map((i, element) => MapEntry(
-                        i,
-                        Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: MyItemCard(
-                                selectedShoe: element, index: i)))) //NOTE
-                    .values
-                    .toList();
-
-                return Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        color: Theme.of(context).primaryColor,
-                        height: 50,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: IconButton(
-                                  onPressed: () {
-                                    Scaffold.of(context).closeEndDrawer();
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Theme.of(context).backgroundColor,
-                                  )),
-                            ),
-                            Align(
-                                alignment: Alignment.center,
-                                child: Text("Shopping Bag",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .backgroundColor))),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25, right: 25, top: 10),
-                          child: ListView(
-                            children: [...a],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        color: Theme.of(context).primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 25, vertical: 20),
-                        // height: 50,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Total Costs: ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            fontSize: 20,
-                                            color: Theme.of(context)
-                                                .backgroundColor)),
-                                Text(
-                                    "${BlocProvider.of<BasketBloc>(context).totalItemsPrice}\$",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            fontSize: 25,
-                                            color: Theme.of(context)
-                                                .backgroundColor)),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Additional Tax: ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            fontSize: 13,
-                                            color: Theme.of(context)
-                                                .backgroundColor)),
-                                Text(
-                                    "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice / 13.75).toStringAsFixed(2))}\$",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            fontSize: 15,
-                                            color: Theme.of(context)
-                                                .backgroundColor)),
-                              ],
-                            ),
-                            const SizedBox(height: 25),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.redAccent,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.wallet,
-                                    color: Theme.of(context).backgroundColor,
-                                  ),
-                                  Text(" Go to the payment",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              fontSize: 20,
-                                              color: Theme.of(context)
-                                                  .backgroundColor))
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      },
     );
   }
 }

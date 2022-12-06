@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
     developer.log("0-MainScreenBuilt");
 
     return Scaffold(
-      endDrawer: const MyDrawer(),
+      endDrawer: MyDrawer(),
       body: Container(
         color: Theme.of(context).backgroundColor,
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
@@ -68,7 +68,6 @@ class HomeScreen extends StatelessWidget {
           builder: (context, state) {
             BlocProvider.of<BasketBloc>(context).add(
                 ItemChanged(newShoppingShoe: shoes[state.currentPage ?? 0]));
-
             // state.
             return Column(
               children: [
