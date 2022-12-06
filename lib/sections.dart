@@ -641,51 +641,57 @@ class MyDrawer extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(
                               left: 25, right: 25, top: 10),
-                          child: AnimatedList(
-                            key: _listKey,
-                            initialItemCount: state.shoppingBasket!.length,
-                            itemBuilder: (context, index, animation) {
-                              return Padding(
-                                  // key: Key(
-                                  //     element.shoe.title.toString() + i.toString()),
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: MyItemCard(
-                                    // key: ValueKey(state.shoppingBasket![index]),
-                                    selectedShoe: state.shoppingBasket![index],
-                                    index: index,
-                                    onPressDelete: (e) async {
-                                      SelectedShoe thisShoe =
-                                          state.shoppingBasket![index];
+                          child: state.shoppingBasket!.isEmpty
+                              ? const Text("Bag Is Empty")
+                              : AnimatedList(
+                                  key: _listKey,
+                                  initialItemCount:
+                                      state.shoppingBasket!.length,
+                                  itemBuilder: (context, index, animation) {
+                                    return Padding(
+                                        // key: Key(
+                                        //     element.shoe.title.toString() + i.toString()),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: MyItemCard(
+                                          // key: ValueKey(state.shoppingBasket![index]),
+                                          selectedShoe:
+                                              state.shoppingBasket![index],
+                                          index: index,
+                                          onPressDelete: (e) async {
+                                            SelectedShoe thisShoe =
+                                                state.shoppingBasket![index];
 
-                                      BlocProvider.of<BasketBloc>(context).add(
-                                          DeleteFromShoppingBasket(
-                                              selectedShoe:
-                                                  state.shoppingBasket![index],
-                                              selectedShoeListIndex: index));
+                                            BlocProvider.of<BasketBloc>(context)
+                                                .add(DeleteFromShoppingBasket(
+                                                    selectedShoe: state
+                                                        .shoppingBasket![index],
+                                                    selectedShoeListIndex:
+                                                        index));
 
-                                      _listKey.currentState!.removeItem(index,
-                                          (context, animation) {
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 10),
-                                          child: ScaleTransition(
-                                            scale: animation,
-                                            child: MyItemCard(
-                                                onPressDelete: (e) {},
-                                                selectedShoe: thisShoe,
-                                                index: index),
-                                          ),
-                                        );
-                                      },
-                                          duration: const Duration(
-                                              milliseconds: 300));
-                                      await Future.delayed(
-                                          const Duration(milliseconds: 300));
-                                    },
-                                  ));
-                            },
-                            // children: [...a],
-                          ),
+                                            _listKey.currentState!.removeItem(
+                                                index, (context, animation) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 10),
+                                                child: ScaleTransition(
+                                                  scale: animation,
+                                                  child: MyItemCard(
+                                                      onPressDelete: (e) {},
+                                                      selectedShoe: thisShoe,
+                                                      index: index),
+                                                ),
+                                              );
+                                            },
+                                                duration: const Duration(
+                                                    milliseconds: 300));
+                                            await Future.delayed(const Duration(
+                                                milliseconds: 300));
+                                          },
+                                        ));
+                                  },
+                                  // children: [...a],
+                                ),
                         ),
                       ),
                       Container(
