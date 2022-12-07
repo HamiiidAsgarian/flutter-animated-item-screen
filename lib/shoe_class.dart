@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class Shoe {
   final int? id;
   final List<Color>? colors;
-  final List<int>? sizes;
+  final List<double>? sizes;
   final double? price;
   final String? title;
   final String? category;
@@ -27,6 +27,12 @@ class Shoe {
     List<Color> colors = (map['colors'] as List<String>).map((e) {
       late Color res;
       switch (e) {
+        case "pink":
+          res = Colors.pinkAccent;
+          break;
+        case "black":
+          res = Colors.black;
+          break;
         case "green":
           res = Colors.greenAccent;
           break;
@@ -63,7 +69,7 @@ class Shoe {
 
 class SelectedShoe extends Shoe {
   final Color selectedColor;
-  final int selectedSize;
+  final double selectedSize;
   final Shoe shoe;
 
   SelectedShoe(
@@ -72,7 +78,7 @@ class SelectedShoe extends Shoe {
       required this.shoe});
 
   factory SelectedShoe.fromShoe(
-      Shoe shoe, Color selectedColor, int selectedSize) {
+      Shoe shoe, Color selectedColor, double selectedSize) {
     return SelectedShoe(
         shoe: shoe, selectedColor: selectedColor, selectedSize: selectedSize);
   }
@@ -82,34 +88,34 @@ List<Map<String, dynamic>> products = [
   {
     "id": 1,
     "title": "Nike Air Max 270",
-    "category": "Running",
-    "sizes": [32, 33, 34, 42],
+    "category": "Sport",
+    "sizes": [5, 5.5, 6, 7],
     "colors": ["red", "green", "blue"],
-    "price": 1200.0,
+    "price": 1200.50,
     "brandName": "Nike",
-    "imageUrl": "assets/images/shoes/n3.png",
+    "imageUrl": "assets/images/shoes/n1.png",
     "LogoUrl": "assets/images/logos/nikeLogo.png"
   },
   {
     "id": 2,
-    "title": "Puma Runner",
-    "category": "Football",
-    "sizes": [41, 42],
-    "colors": ["green", "yellow"],
-    "price": 800.0,
-    "brandName": "Puma",
+    "title": "Flexagon Force 4",
+    "category": "Footwear Women",
+    "sizes": [5.5, 6],
+    "colors": ["pink", "green"],
+    "price": 90.00,
+    "brandName": "Rebook",
     "imageUrl": "assets/images/shoes/r1.png",
-    "LogoUrl": "assets/images/logos/pumaLogo.png"
+    "LogoUrl": "assets/images/logos/rebookLogo.png"
   },
   {
     "id": 3,
-    "title": "Ancestor 2011",
-    "category": "Sport",
-    "sizes": [39, 41, 42],
-    "colors": ["yellow", "green", "blue", "red"],
-    "price": 1399.9,
-    "brandName": "Rebook",
+    "title": "Enzo Sport IMEVA-MAHSA",
+    "category": "Men's Running",
+    "sizes": [5.5, 6, 7.5],
+    "colors": ["black", "green", "blue", "red"],
+    "price": 1401.22,
+    "brandName": "Puma",
     "imageUrl": "assets/images/shoes/p1.png",
-    "LogoUrl": "assets/images/logos/rebookLogo.png"
+    "LogoUrl": "assets/images/logos/pumaLogo.png"
   }
 ];

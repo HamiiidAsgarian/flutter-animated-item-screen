@@ -1,19 +1,24 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer' as developer;
 
-import 'package:animateditems/basket_bloc.dart';
-import 'package:animateditems/consts.dart';
-import 'package:animateditems/favorite_bloc.dart';
-import 'package:animateditems/sections.dart';
+import '/basket_bloc.dart';
+import '/consts.dart';
+import '/favorite_bloc.dart';
+import '/sections.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:animateditems/bloc1.dart';
-import 'package:animateditems/widgets.dart';
+import '/bloc1.dart';
+import '/widgets.dart';
 // import '';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -71,21 +76,6 @@ class HomeScreen extends StatelessWidget {
             // state.
             return Column(
               children: [
-                // Center(
-                //   child: ColorFiltered(
-                //     colorFilter: ColorFilter.mode(Colors.red, BlendMode.hue),
-                //     child: Container(
-                //       margin: const EdgeInsets.all(50),
-                //       width: 20,
-                //       height: 20,
-                //       // color: Colors.purple,
-                //       child: Opacity(
-                //         opacity: (1),
-                //         child: FlutterLogo(),
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 AppBarSection(
                   shoe: shoes[state.currentPage ?? 0],
                   cardItemsNumber: 0,

@@ -1,13 +1,14 @@
 import 'dart:developer' as developer;
 
-import 'package:animateditems/basket_bloc.dart';
-import 'package:animateditems/favorite_bloc.dart';
+import 'basket_bloc.dart';
+import 'shoe_class.dart';
+
+import 'favorite_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:animateditems/bloc1.dart';
-import 'package:animateditems/shoe_class.dart';
-import 'package:animateditems/widgets.dart';
+import '/bloc1.dart';
+import '/widgets.dart';
 import 'package:rive/rive.dart' as rive;
 // import '';
 
@@ -71,24 +72,19 @@ class _AddToBasketSectionState extends State<AddToBasketSection>
           Center(
             child: AspectRatio(
               aspectRatio: 1.6,
-              child: Container(
-                // height: 200,
-                // width: MediaQuery.of(context).size.width - 100,
-                // color: Colors.red,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                      // width: double.infinity,
-                      // height: 300,
-                      child: rive.RiveAnimation.asset(
-                    "assets/animations/packing.riv",
-                    fit: BoxFit.fill,
-                    controllers: [_controller],
-                    onInit: (p0) {
-                      setState(() {});
-                    },
-                  )),
-                ),
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                    // width: double.infinity,
+                    // height: 300,
+                    child: rive.RiveAnimation.asset(
+                  "assets/animations/packing.riv",
+                  fit: BoxFit.fill,
+                  controllers: [_controller],
+                  onInit: (p0) {
+                    setState(() {});
+                  },
+                )),
               ),
             ),
           ),
@@ -242,13 +238,7 @@ class ItemSection extends StatelessWidget {
       height: 450,
       child: Stack(
         children: [
-          Container(
-              // height: 5000,
-              // width: 5000,
-              // flex: 4,
-              child: Container(
-                  // color: Colors.green,
-                  child: Stack(children: [
+          Stack(children: [
             RotatedBox(
               quarterTurns: 1,
               child: TweenAnimationBuilder(
@@ -274,164 +264,136 @@ class ItemSection extends StatelessWidget {
               ),
             ),
             item
-          ]))),
+          ]),
           Align(
             alignment: Alignment.topLeft,
-            child: Container(
-              // color: Colors.red,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    // color: Colors.amberAccent,
-                    child: Column(
-                      children: [
-                        Text("Size",
-                            style: Theme.of(context).textTheme.bodySmall),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TweenAnimationBuilder(
-                          key: UniqueKey(),
-                          duration: const Duration(milliseconds: 600),
-                          tween: Tween(begin: -10.0, end: 0.0),
-                          curve: Curves.easeOutBack,
-                          builder: (context, value, child) =>
-                              Transform.translate(
-                            offset: Offset(value, 0),
-                            child: OptionBoxes(
-                                items: shoe.sizes ?? [],
-                                onPress: (index) {
-                                  onSelectSize(index);
-                                }),
-                          ),
-                        )
-                      ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    Text("Size", style: Theme.of(context).textTheme.bodySmall),
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  Container(
-                    // color: const Color.fromARGB(255, 220, 255, 64),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TweenAnimationBuilder(
-                            key: UniqueKey(),
-                            duration: const Duration(seconds: 1),
-                            tween: Tween(begin: 0.5, end: 1.0),
-                            curve: Curves.easeOutBack,
-                            builder: (context, value, child) => Transform.scale(
-                                scale: value,
-                                child: Text("${shoe.price}\$",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge))),
-                        const SizedBox(height: 5),
-                        Text("Price",
-                            style: Theme.of(context).textTheme.bodySmall)
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                    TweenAnimationBuilder(
+                      key: UniqueKey(),
+                      duration: const Duration(milliseconds: 600),
+                      tween: Tween(begin: -10.0, end: 0.0),
+                      curve: Curves.easeOutBack,
+                      builder: (context, value, child) => Transform.translate(
+                        offset: Offset(value, 0),
+                        child: OptionBoxes(
+                            items: shoe.sizes ?? [],
+                            onPress: (index) {
+                              onSelectSize(index);
+                            }),
+                      ),
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TweenAnimationBuilder(
+                        key: UniqueKey(),
+                        duration: const Duration(seconds: 1),
+                        tween: Tween(begin: 0.5, end: 1.0),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) => Transform.scale(
+                            scale: value,
+                            child: Text("${shoe.price}\$",
+                                style:
+                                    Theme.of(context).textTheme.titleLarge))),
+                    const SizedBox(height: 5),
+                    Text("Price", style: Theme.of(context).textTheme.bodySmall)
+                  ],
+                )
+              ],
             ),
           ),
           Align(
             alignment: Alignment.topRight,
-            child: Container(
-              // color: Colors.blue,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    // color: Colors.amberAccent,
-                    child: Column(
-                      children: [
-                        Text("Fav",
-                            style: Theme.of(context).textTheme.bodySmall),
-                        const SizedBox(height: 10),
-                        BlocBuilder<FavoriteBloc, FavoriteState>(
-                          builder: (context, state) {
-                            return MyRoundedButton(
-                              onPress: (_) {
-                                // print("${shoe.title}");
-                                print("* ${state.favorite}");
-                                // print(BlocProvider.of<BasketBloc>(context)
-                                //     .favoriteShoes
-                                //     .contains(shoe));
-                                // print(state.favorite ?? [].contains(shoe));
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    Text("Fav", style: Theme.of(context).textTheme.bodySmall),
+                    const SizedBox(height: 10),
+                    BlocBuilder<FavoriteBloc, FavoriteState>(
+                      builder: (context, state) {
+                        return MyRoundedButton(
+                          onPress: (_) {
+                            // print("${shoe.title}");
+                            // print(BlocProvider.of<BasketBloc>(context)
+                            //     .favoriteShoes
+                            //     .contains(shoe));
+                            // print(state.favorite ?? [].contains(shoe));
 
-                                BlocProvider.of<FavoriteBloc>(context)
-                                    .add(AddFavorite(newFavorite: shoe));
-                              },
-                              child: (BlocProvider.of<FavoriteBloc>(context)
-                                      .favoriteShoes
-                                      .contains(shoe))
-                                  ? TweenAnimationBuilder(
-                                      // key: UniqueKey(),
-                                      duration:
-                                          const Duration(milliseconds: 600),
-                                      tween: Tween(begin: 25.0, end: 32.0),
-                                      curve: Curves.easeOutBack,
-                                      builder: (context, value, child) => Icon(
-                                        // key: UniqueKey(),
-                                        Icons.favorite_border_outlined,
-                                        color: BlocProvider.of<FavoriteBloc>(
-                                                    context)
+                            BlocProvider.of<FavoriteBloc>(context)
+                                .add(AddFavorite(newFavorite: shoe));
+                          },
+                          child: (BlocProvider.of<FavoriteBloc>(context)
+                                  .favoriteShoes
+                                  .contains(shoe))
+                              ? TweenAnimationBuilder(
+                                  // key: UniqueKey(),
+                                  duration: const Duration(milliseconds: 600),
+                                  tween: Tween(begin: 25.0, end: 32.0),
+                                  curve: Curves.easeOutBack,
+                                  builder: (context, value, child) => Icon(
+                                    // key: UniqueKey(),
+                                    Icons.favorite_border_outlined,
+                                    color:
+                                        BlocProvider.of<FavoriteBloc>(context)
                                                 .favoriteShoes
                                                 .contains(shoe)
                                             ? Colors.red
                                             : null,
-                                        size: value,
-                                      ),
-                                    )
-                                  : Icon(
-                                      key: UniqueKey(),
-                                      Icons.favorite_border_outlined,
-                                      color:
-                                          BlocProvider.of<FavoriteBloc>(context)
-                                                  .favoriteShoes
-                                                  .contains(shoe)
-                                              ? Colors.red
-                                              : null,
-                                      size: 20,
-                                    ),
-                            );
-                          },
-                        ),
-                      ],
+                                    size: value,
+                                  ),
+                                )
+                              : Icon(
+                                  key: UniqueKey(),
+                                  Icons.favorite_border_outlined,
+                                  color: BlocProvider.of<FavoriteBloc>(context)
+                                          .favoriteShoes
+                                          .contains(shoe)
+                                      ? Colors.red
+                                      : null,
+                                  size: 20,
+                                ),
+                        );
+                      },
                     ),
-                  ),
-                  Container(
-                    // color: const Color.fromARGB(255, 220, 255, 64),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TweenAnimationBuilder(
-                          key: UniqueKey(),
-                          duration: const Duration(milliseconds: 800),
-                          tween: Tween(begin: 10.0, end: 0.0),
-                          curve: const Interval(0.0, 1.0,
-                              curve: Curves.easeOutBack),
-                          builder: (context, value, child) =>
-                              Transform.translate(
-                            offset: Offset(value, 0),
-                            child: OptionBoxes(
-                                items: shoe.colors ?? [],
-                                onPress: (index) {
-                                  onSelectColor(index);
-                                }),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text("Color",
-                            style: Theme.of(context).textTheme.bodySmall)
-                      ],
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TweenAnimationBuilder(
+                      key: UniqueKey(),
+                      duration: const Duration(milliseconds: 800),
+                      tween: Tween(begin: 10.0, end: 0.0),
+                      curve:
+                          const Interval(0.0, 1.0, curve: Curves.easeOutBack),
+                      builder: (context, value, child) => Transform.translate(
+                        offset: Offset(value, 0),
+                        child: OptionBoxes(
+                            items: shoe.colors ?? [],
+                            onPress: (index) {
+                              onSelectColor(index);
+                            }),
+                      ),
                     ),
-                  )
-                ],
-              ),
+                    const SizedBox(height: 5),
+                    Text("Color", style: Theme.of(context).textTheme.bodySmall)
+                  ],
+                )
+              ],
             ),
           ),
         ],
@@ -450,28 +412,24 @@ class TitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // height: 100,
-      // color: Colors.orange,
-      child: TweenAnimationBuilder(
-        key: UniqueKey(),
-        duration: const Duration(seconds: 1),
-        tween: Tween(begin: 0.4, end: 0.9),
-        curve: Curves.easeOutBack,
-        builder: (context, value, child) => Transform.scale(
-          scale: value,
-          child: Opacity(
-            opacity: value,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text("${shoe.title}",
-                    style: Theme.of(context).textTheme.titleLarge),
-                Text(" ${shoe.category}",
-                    style: Theme.of(context).textTheme.titleMedium)
-              ],
-            ),
+    return TweenAnimationBuilder(
+      key: UniqueKey(),
+      duration: const Duration(seconds: 1),
+      tween: Tween(begin: 0.4, end: 0.9),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) => Transform.scale(
+        scale: value,
+        child: Opacity(
+          opacity: value,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text("${shoe.title}",
+                  style: Theme.of(context).textTheme.titleLarge),
+              Text(" ${shoe.category}",
+                  style: Theme.of(context).textTheme.titleMedium)
+            ],
           ),
         ),
       ),
@@ -507,14 +465,12 @@ class AppBarSection extends StatelessWidget {
                 builder: (context, value, child) {
                   return Transform.translate(
                     offset: Offset(value, 0),
-                    child: Container(
-                        // color: Colors.red,
-                        child: Opacity(
-                            opacity: 1,
-                            child: Image.asset(
-                              shoe.logoUrl ?? "",
-                              color: Theme.of(context).shadowColor,
-                            ))),
+                    child: Opacity(
+                        opacity: 1,
+                        child: Image.asset(
+                          shoe.logoUrl ?? "",
+                          color: Theme.of(context).shadowColor,
+                        )),
                   );
                 }),
             SizedBox(
@@ -606,176 +562,180 @@ class MyDrawer extends StatelessWidget {
                 //     .values
                 //     .toList();
 
-                return Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        color: Theme.of(context).primaryColor,
-                        height: 50,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: IconButton(
-                                  onPressed: () {
-                                    Scaffold.of(context).closeEndDrawer();
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Theme.of(context).backgroundColor,
-                                  )),
-                            ),
-                            Align(
-                                alignment: Alignment.center,
-                                child: Text("Shopping Bag",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .backgroundColor))),
-                          ],
-                        ),
+                return Column(
+                  children: [
+                    Container(
+                      color: Theme.of(context).primaryColor,
+                      height: 50,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: IconButton(
+                                onPressed: () {
+                                  Scaffold.of(context).closeEndDrawer();
+                                },
+                                icon: Icon(
+                                  Icons.close,
+                                  color: Theme.of(context).backgroundColor,
+                                )),
+                          ),
+                          Align(
+                              alignment: Alignment.center,
+                              child: Text("Shopping Bag",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          color: Theme.of(context)
+                                              .backgroundColor))),
+                        ],
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25, right: 25, top: 10),
-                          child: state.shoppingBasket!.isEmpty
-                              ? const Text("Bag Is Empty")
-                              : AnimatedList(
-                                  key: _listKey,
-                                  initialItemCount:
-                                      state.shoppingBasket!.length,
-                                  itemBuilder: (context, index, animation) {
-                                    return Padding(
-                                        // key: Key(
-                                        //     element.shoe.title.toString() + i.toString()),
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
-                                        child: MyItemCard(
-                                          // key: ValueKey(state.shoppingBasket![index]),
-                                          selectedShoe:
-                                              state.shoppingBasket![index],
-                                          index: index,
-                                          onPressDelete: (e) async {
-                                            SelectedShoe thisShoe =
-                                                state.shoppingBasket![index];
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(left: 25, right: 25, top: 10),
+                        child: state.shoppingBasket!.isEmpty
+                            ? const Text("Bag Is Empty")
+                            : AnimatedList(
+                                key: _listKey,
+                                initialItemCount: state.shoppingBasket!.length,
+                                itemBuilder: (context, index, animation) {
+                                  return Padding(
+                                      // key: Key(
+                                      //     element.shoe.title.toString() + i.toString()),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: MyItemCard(
+                                        // key: ValueKey(state.shoppingBasket![index]),
+                                        selectedShoe:
+                                            state.shoppingBasket![index],
+                                        index: index,
+                                        onPressDelete: (e) async {
+                                          SelectedShoe thisShoe =
+                                              state.shoppingBasket![index];
 
-                                            BlocProvider.of<BasketBloc>(context)
-                                                .add(DeleteFromShoppingBasket(
-                                                    selectedShoe: state
-                                                        .shoppingBasket![index],
-                                                    selectedShoeListIndex:
-                                                        index));
+                                          BlocProvider.of<BasketBloc>(context)
+                                              .add(DeleteFromShoppingBasket(
+                                                  selectedShoe: state
+                                                      .shoppingBasket![index],
+                                                  selectedShoeListIndex:
+                                                      index));
 
-                                            _listKey.currentState!.removeItem(
-                                                index, (context, animation) {
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: ScaleTransition(
-                                                  scale: animation,
-                                                  child: MyItemCard(
-                                                      onPressDelete: (e) {},
-                                                      selectedShoe: thisShoe,
-                                                      index: index),
-                                                ),
-                                              );
-                                            },
-                                                duration: const Duration(
-                                                    milliseconds: 300));
-                                            await Future.delayed(const Duration(
-                                                milliseconds: 300));
+                                          _listKey.currentState!.removeItem(
+                                              index, (context, animation) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child: SlideTransition(
+                                                position: Tween(
+                                                        begin:
+                                                            const Offset(.9, 0),
+                                                        end: const Offset(0, 0))
+                                                    .animate(CurvedAnimation(
+                                                        parent: animation,
+                                                        curve: Curves
+                                                            .easeOutBack)),
+                                                child: MyItemCard(
+                                                    onPressDelete: (e) {},
+                                                    selectedShoe: thisShoe,
+                                                    index: index),
+                                              ),
+                                            );
                                           },
-                                        ));
-                                  },
-                                  // children: [...a],
-                                ),
-                        ),
+                                              duration: const Duration(
+                                                  milliseconds: 600));
+                                          // await Future.delayed(const Duration(
+                                          //     milliseconds: 300));
+                                        },
+                                      ));
+                                },
+                                // children: [...a],
+                              ),
                       ),
-                      Container(
-                        color: Theme.of(context).primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 25, vertical: 20),
-                        // height: 50,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                    Container(
+                      color: Theme.of(context).primaryColor,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25, vertical: 20),
+                      // height: 50,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Total Costs: ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          fontSize: 20,
+                                          color: Theme.of(context)
+                                              .backgroundColor)),
+                              Text(
+                                  "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice).toStringAsFixed(2))}\$",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          fontSize: 25,
+                                          color: Theme.of(context)
+                                              .backgroundColor)),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Additional Tax: ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          fontSize: 13,
+                                          color: Theme.of(context)
+                                              .backgroundColor)),
+                              Text(
+                                  "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice / 13.75).toStringAsFixed(2))}\$",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                          fontSize: 15,
+                                          color: Theme.of(context)
+                                              .backgroundColor)),
+                            ],
+                          ),
+                          const SizedBox(height: 25),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Total Costs: ",
+                                Icon(
+                                  Icons.wallet,
+                                  color: Theme.of(context).backgroundColor,
+                                ),
+                                Text(" Go to the payment",
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium!
                                         .copyWith(
                                             fontSize: 20,
                                             color: Theme.of(context)
-                                                .backgroundColor)),
-                                Text(
-                                    "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice).toStringAsFixed(2))}\$",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            fontSize: 25,
-                                            color: Theme.of(context)
-                                                .backgroundColor)),
+                                                .backgroundColor))
                               ],
                             ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Additional Tax: ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            fontSize: 13,
-                                            color: Theme.of(context)
-                                                .backgroundColor)),
-                                Text(
-                                    "${double.parse((BlocProvider.of<BasketBloc>(context).totalItemsPrice / 13.75).toStringAsFixed(2))}\$",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            fontSize: 15,
-                                            color: Theme.of(context)
-                                                .backgroundColor)),
-                              ],
-                            ),
-                            const SizedBox(height: 25),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.redAccent,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.wallet,
-                                    color: Theme.of(context).backgroundColor,
-                                  ),
-                                  Text(" Go to the payment",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              fontSize: 20,
-                                              color: Theme.of(context)
-                                                  .backgroundColor))
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
             ),

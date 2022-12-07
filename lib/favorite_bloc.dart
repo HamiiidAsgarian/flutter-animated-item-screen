@@ -2,7 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:animateditems/shoe_class.dart';
+import '/shoe_class.dart';
 
 abstract class FavoriteEvent {}
 

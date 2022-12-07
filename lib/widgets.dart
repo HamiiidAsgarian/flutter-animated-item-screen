@@ -1,10 +1,7 @@
 import 'dart:math';
 
-import 'package:animateditems/shoe_class.dart';
+import 'shoe_class.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'basket_bloc.dart';
 
 class MyRoundedButton extends StatelessWidget {
   const MyRoundedButton({
@@ -24,11 +21,8 @@ class MyRoundedButton extends StatelessWidget {
   final int? index;
   final bool? isActive;
 
-  // bool isActive = false;
   @override
   Widget build(BuildContext context) {
-    // borderColor = Theme.of(context).shadowColor;
-
     return TweenAnimationBuilder(
       key: UniqueKey(),
       tween: Tween(begin: 1.5, end: 3.0),
@@ -98,7 +92,9 @@ class MyRoundedButtonFill extends StatelessWidget {
                   : Theme.of(context).backgroundColor,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                  width: isActive ?? false ? 1.5 : 0,
+                  width: 1.5,
+
+                  // width: isActive ?? false ? 1.5 : 0,
                   color: isActive ?? false
                       ? Theme.of(context).primaryColor
                       : Theme.of(context).shadowColor)),
@@ -262,7 +258,7 @@ class _ItemState extends State<Item> with SingleTickerProviderStateMixin {
                           child: Opacity(
                               opacity: itemAnimOpacity.value,
                               child: Transform.rotate(
-                                  angle: -pi / 4, child: widget.child)),
+                                  angle: -pi / 8, child: widget.child)),
                         ),
                       );
                     },
@@ -312,22 +308,25 @@ class MyItemCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      "${index}- ${selectedShoe.shoe.title}",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontSize: 20),
+                    Expanded(
+                      child: FittedBox(
+                        child: Text(
+                          "${selectedShoe.shoe.title}",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(fontSize: 20),
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                        child: Row(children: [
+                    Row(children: [
                       Text(
                         "Color  ",
                         style: Theme.of(context)
@@ -339,9 +338,8 @@ class MyItemCard extends StatelessWidget {
                         radius: 5,
                         backgroundColor: selectedShoe.selectedColor,
                       ),
-                    ])),
-                    Container(
-                        child: Row(children: [
+                    ]),
+                    Row(children: [
                       Text(
                         "Size ",
                         style: Theme.of(context)
@@ -356,7 +354,7 @@ class MyItemCard extends StatelessWidget {
                             .bodySmall!
                             .copyWith(fontSize: 15),
                       ),
-                    ])),
+                    ]),
                   ],
                 ),
                 const Expanded(

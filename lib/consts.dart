@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Theming {
   static Color mainGrey = const Color(0xFFd8e1e4);
-  static Color mainBlack = Color.fromARGB(255, 10, 10, 10);
+  static Color mainBlack = const Color.fromARGB(255, 10, 10, 10);
 
   static Color mainWhite = const Color(0xFFFFFFFF);
   static TextStyle mainTextStyle = const TextStyle(

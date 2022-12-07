@@ -3,7 +3,7 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:animateditems/shoe_class.dart';
+import 'shoe_class.dart';
 
 abstract class BasketEvent {}
 
@@ -34,7 +34,7 @@ class DeleteFromShoppingBasket extends BasketEvent {
 class SelectSize extends BasketEvent {
   // Shoe newShoppingShoe;
   // Color color;
-  int size;
+  double size;
   SelectSize({required this.size});
 }
 
@@ -70,17 +70,17 @@ class BasketInit extends BasketState {
 // }
 
 class BasketUpdate extends BasketState {
-  BasketUpdate({required this.shoppingBasket});
+  BasketUpdate({super.shoppingBasket});
   // final List<Shoe> shoes;
 
-  final List<SelectedShoe> shoppingBasket;
+  // final List<SelectedShoe> shoppingBasket;
 }
 //---------------!SECTION
 
 class BasketBloc extends Bloc<BasketEvent, BasketState> {
   // List<Shoe> favoriteShoes = [];
   List<SelectedShoe> shoppingBasket = [];
-  int? selectedSize;
+  double? selectedSize;
   Color? selectedColor;
   Shoe? currentShoe;
   double totalItemsPrice = 0.0;
@@ -100,13 +100,11 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
   void onAddSize(SelectSize event, Emitter<BasketState> emit) {
     selectedSize = event.size;
     // emit(BasketUpdate(shoppingBasket: state.shoppingBasket!));
-    print(selectedSize);
   }
 
   void onAddColor(SelectColor event, Emitter<BasketState> emit) {
     selectedColor = event.color;
     // emit(BasketUpdate(shoppingBasket: state.shoppingBasket!));
-    print(selectedColor);
   }
 
   void onItemChange(ItemChanged event, Emitter<BasketState> emit) {
@@ -144,10 +142,9 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     for (var element in shoppingBasket) {
       totalItemsPrice = (element.shoe.price! + totalItemsPrice);
     }
-    print(totalItemsPrice);
 
-    (state.shoppingBasket!.forEach((element) =>
-        print("${element.selectedColor} ${element.selectedSize}")));
+    // (state.shoppingBasket!.forEach((element) =>
+    //     print("${element.selectedColor} ${element.selectedSize}")));
   }
 
   void onDeleteFromBasket(
@@ -162,9 +159,8 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     for (var element in shoppingBasket) {
       totalItemsPrice = (element.shoe.price! + totalItemsPrice);
     }
-    print(totalItemsPrice);
 
-    (state.shoppingBasket!.forEach((element) =>
-        print("${element.selectedColor} ${element.selectedSize}")));
+    // (state.shoppingBasket!.forEach((element) =>
+    //     print("${element.selectedColor} ${element.selectedSize}")));
   }
 }
