@@ -54,6 +54,5 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       favoriteShoes = favoriteShoes.toSet().toList();
     }
     emit(FavoritesUpdate(shoes: favoriteShoes));
-    print("$favoriteShoes");
   }
 }

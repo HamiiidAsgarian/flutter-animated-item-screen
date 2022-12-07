@@ -296,12 +296,14 @@ class MyItemCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10)),
         child: Stack(
           children: [
-            SizedBox(
-              width: double.infinity,
-              // color: Colors.red,
-              child: Image.asset(
-                selectedShoe.shoe.imageUrl.toString(),
-                fit: BoxFit.cover,
+            Center(
+              child: FractionallySizedBox(
+                widthFactor: .7,
+                // color: Colors.red,
+                child: Image.asset(
+                  selectedShoe.shoe.imageUrl.toString(),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Column(
@@ -309,16 +311,14 @@ class MyItemCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: FittedBox(
-                        child: Text(
-                          "${selectedShoe.shoe.title}",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(fontSize: 20),
-                        ),
+                      child: Text(
+                        "${selectedShoe.shoe.title}",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(fontSize: 20),
                       ),
                     ),
                   ],
